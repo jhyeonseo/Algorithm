@@ -25,8 +25,8 @@ int main()
 	print_adjmatrix(GM, v);
 	input_adjlist(GL, &v, &e);
 	print_adjlist(GL, v);
-
-
+	
+	return 0;
 }
 void input_adjmatrix(int a[][MAX_NODE], int* v, int* e)
 {
