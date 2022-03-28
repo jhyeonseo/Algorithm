@@ -2,28 +2,29 @@
 #include<stdlib.h>
 #include<time.h>
 
-# define canvas_n 15
+#define canvas_n 15
 #define canvas_m 15
-
 int canvas[canvas_n][canvas_m] = { 0, };
-void recur_fill(int x, int y); 
-void recur_fill_2(int x,int y); 
-void print_canvas();   // 0 = blank, 1 = O (wall) , 2 = X (painting)
-void canvas_eraser();
-void canvas_border(int x, int y,int option);
-void recursive_line(int x1, int y1, int x2, int y2);
-int seed_x = 4;
-int seed_y = 3;
+
+void recur_fill(int x, int y);   // 벽 제외 채우기 (대각선 미포함)
+void recur_fill_2(int x,int y);  // 벽 채우기 (대각선 포함)
+void print_canvas(int x,int y);   // 0 = blank, 1 = O (wall) , 2 = X (painting), (x,y) = S
+void canvas_eraser();  // canvas 0으로 초기화
+void canvas_border(int x, int y,int option);  // 랜덤으로 벽 만들기, option=0 : 시드자리 비우기, option=1 : 시드자리 벽으로 채우기
+void recursive_line(int x1, int y1, int x2, int y2); // (x1,y1)부터 (x2,y2)까지 직선 그리기
+
 int main()
 {
+	int seed_x = 4;
+	int seed_y = 3;
 	srand(time(NULL));
 
-	canvas_border(seed_y, seed_x, 1);
+	canvas_border(seed_y, seed_x, 0);
 	printf("< Before >\n");
-	print_canvas();
-	recur_fill_2(seed_y, seed_x);
+	print_canvas(seed_y,seed_x);
+	recur_fill(seed_y, seed_x);
 	printf("< After >\n");
-	print_canvas();
+	print_canvas(seed_y,seed_x);
 	printf("Border = O\nFilled = X\nStart = S\nEmpty = blank\n\n");
 
 
@@ -35,7 +36,6 @@ void recur_fill(int x, int y)
 		return;
 
 	canvas[x][y] = 2;
-	//print_canvas();
 
 	recur_fill(x + 1, y);
 	recur_fill(x, y - 1);
@@ -50,10 +50,8 @@ void recur_fill_2(int x, int y)
 {
 	if (canvas[x][y] !=1 || x<0 || x>canvas_n - 1 || y<0 || y>canvas_m - 1)
 		return;
-	
 
 	canvas[x][y] =2;
-	print_canvas();
 
 	recur_fill_2(x + 1, y);
 	recur_fill_2(x - 1, y);
@@ -66,18 +64,14 @@ void recur_fill_2(int x, int y)
 
 
 }
-void print_canvas()
+void print_canvas(int x, int y)
 {
-	for (int i = 0; i < 100000000; i++);
-
-
-
 
 	for (int i = 0; i < canvas_n; i++)
 	{
 		for (int j = 0; j < canvas_m; j++)
 		{
-			if ((i == seed_y) && (j == seed_x))
+			if ((i == x) && (j == y))
 			{
 				printf("S ");
 				continue;
