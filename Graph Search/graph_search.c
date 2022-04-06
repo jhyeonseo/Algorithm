@@ -53,6 +53,11 @@ void BFS_adjlist(node* a[],int v);
 void count_matrix_components(int a[][MAX_NODE], int v);
 void count_list_components(node* a[], int v);
 // BFS search
+int son_of_root;
+int order;
+void AP_recur_starter(node* a[], int v);
+int AP_recur(node* a[], int i);
+// Spanning tree - articulation point
 int main()
 {
 	int v, e;
@@ -78,6 +83,8 @@ int main()
 	BFS_adjlist(GL, v);
 	printf("< Graph # count >\n");
 	count_list_components(GL, v);
+	printf("< Articulation point >\n");
+	AP_recur_starter(GL, v);
 
 	return 0;
 }
@@ -289,7 +296,7 @@ void DFS_recur_matrix(int a[][MAX_NODE], int v, int i)
 	printf("Visit %c\n", int_to_name(i));
 	for (int j = 0; j < v; j++)
 	{
-		if ((a[i][j] == 1) & (check[j] == 0))
+		if ((a[i][j] == 1) && (check[j] == 0))
 		{
 			DFS_recur_matrix(a, v, j);
 		}
@@ -313,7 +320,7 @@ void DFS_nonrecur_matrix(int a[][MAX_NODE], int v)
 				printf("Visit %c\n", int_to_name(i));
 				for (int k = 0; k < v; k++)
 				{
-					if ((a[i][k] == 1) & (check[k] == 0))
+					if ((a[i][k] == 1) && (check[k] == 0))
 					{
 						push(k);
 						check[k] = 1;
@@ -397,7 +404,7 @@ void BFS_adjmatrix(int a[][MAX_NODE], int v)
 				printf("Visit %c\n", int_to_name(i));
 				for (int j = 0; j < v; j++)
 				{
-					if ((a[i][j] == 1) & (check[j] == 0))
+					if ((a[i][j] == 1) && (check[j] == 0))
 					{
 						put(j);
 						check[j] = 1;
@@ -454,7 +461,7 @@ void count_matrix_components(int a[][MAX_NODE], int v)
 				i = get();
 				for (int j = 0; j < v; j++)
 				{
-					if ((a[i][j] == 1)& (check[j] == 0))
+					if ((a[i][j] == 1)&& (check[j] == 0))
 					{
 						put(j);
 						check[j] = 1;
@@ -500,3 +507,62 @@ void count_list_components(node* a[], int v)
 	end_queue();
 }
 // BFS search
+void AP_recur_starter(node* a[], int v)
+{
+	order = son_of_root = 0;
+	for (int i = 0; i < v; i++) { check[i] = 0; }
+
+	for (int i = 0; i < v; i++)
+	{
+		if (check[i] == 0)
+		{
+			AP_recur(a, i);
+
+			if (son_of_root > 1)
+				printf("%c has %d son <articulation point!>\n", int_to_name(i), son_of_root);
+			else
+				printf("Root node %c has %d son\n", int_to_name(i), son_of_root);
+		}
+		son_of_root = 0;
+		order = 0;
+	}
+	
+
+}
+int AP_recur(node* a[], int i)
+{
+	int min, m;
+	int flag_root;
+	if (order == 0)
+		flag_root = 1;
+	else
+		flag_root = 0;
+
+	check[i] = min = ++order;
+
+	for (node* t = a[i]; t != NULL; t = t->next)
+	{
+		if ((flag_root==1) && (check[t->vertex] == 0))
+			son_of_root++;
+
+		if (check[t->vertex] == 0)
+		{
+			m = AP_recur(a, t->vertex);
+			if (min > m)
+				min = m;
+
+			if (!flag_root)
+			{
+				if (check[i] <= m)
+					printf("%c(order=%d) : %d <articulation point!>\n", int_to_name(i), check[i], m);
+				else
+					printf("%c(order=%d) : %d \n", int_to_name(i), check[i], m);
+			}
+		}
+		else if (check[t->vertex] < min)
+			min = check[t->vertex];
+	}
+
+	return min;
+};
+// Spanning tree - articulation point
