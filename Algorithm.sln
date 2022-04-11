@@ -17,8 +17,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Recursion", "Recursion\Recu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Recursive to Non-recursive", "Recursive to Non-recursive\Recursive to Non-recursive.vcxproj", "{AC5A581A-2D0D-49D3-BB86-BA416E939824}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Recursion in Canvas", "Recursion in Canvus\Recursion in Canvus.vcxproj", "{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graph Representation", "Graph Representation\Graph Representation.vcxproj", "{EACCD70A-9E78-4BFF-9F58-DFB3DE113ECD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graph Search", "Graph Search\Graph Search.vcxproj", "{50B6B237-C181-45AB-98FF-22241BA7789F}"
@@ -87,14 +85,6 @@ Global
 		{AC5A581A-2D0D-49D3-BB86-BA416E939824}.Release|x64.Build.0 = Release|x64
 		{AC5A581A-2D0D-49D3-BB86-BA416E939824}.Release|x86.ActiveCfg = Release|Win32
 		{AC5A581A-2D0D-49D3-BB86-BA416E939824}.Release|x86.Build.0 = Release|Win32
-		{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}.Debug|x64.ActiveCfg = Debug|x64
-		{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}.Debug|x64.Build.0 = Debug|x64
-		{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}.Debug|x86.ActiveCfg = Debug|Win32
-		{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}.Debug|x86.Build.0 = Debug|Win32
-		{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}.Release|x64.ActiveCfg = Release|x64
-		{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}.Release|x64.Build.0 = Release|x64
-		{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}.Release|x86.ActiveCfg = Release|Win32
-		{A9C705F1-D8F6-4D62-97AE-E140CFDB0DA5}.Release|x86.Build.0 = Release|Win32
 		{EACCD70A-9E78-4BFF-9F58-DFB3DE113ECD}.Debug|x64.ActiveCfg = Debug|x64
 		{EACCD70A-9E78-4BFF-9F58-DFB3DE113ECD}.Debug|x64.Build.0 = Debug|x64
 		{EACCD70A-9E78-4BFF-9F58-DFB3DE113ECD}.Debug|x86.ActiveCfg = Debug|Win32

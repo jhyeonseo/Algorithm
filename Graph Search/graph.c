@@ -1,188 +1,14 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include"graph.h"
+#include"stack.h"
+#include"node.h"
+#include"heap.h"
 
-#define Max 10000
-int stack[Max];
-int top = -1;
-int push(int n);
-int pop();
-// stack
-
-typedef struct _dnode
-{
-	struct _dnode* prev;
-	struct _dnode* next;
-	int key;
-}dnode;
-dnode* head;
-dnode* tail;
-void init_queue();
-void end_queue();
-int queue_empty();
-int put(int k);
-int get();
-// queue
-
-#define MAX_NODE 100
-int GM[MAX_NODE][MAX_NODE];
-int GL[MAX_NODE];
 int name_to_int(char c) { return c - 'A'; };
 char int_to_name(int i) { return i + 'A'; };
-void input_adjmatrix(int a[][MAX_NODE], int* v, int* e);
-void print_adjmatrix(int a[][MAX_NODE], int v);
-typedef struct _node
-{
-	int vertex;
-	struct _node* next;
-}node;
-void input_adjlist(int* a[], int* v, int* e);
-void print_adjlist(int* a[], int v);
-// graph representation
-
-int check[MAX_NODE];
-void DFS_recur_matrix_starter(int a[][MAX_NODE], int v);  
-void DFS_recur_matrix(int a[][MAX_NODE], int v,int i);
-void DFS_nonrecur_matrix(int a[][MAX_NODE], int v);
-void DFS_recur_list_starter(node* a[], int v);
-void DFS_recur_list(node* a[], int v, int i);
-void DFS_nonrecur_list(node* a[], int v);
-// DFS search
-void BFS_adjmatrix(int a[][MAX_NODE],int v);
-void BFS_adjlist(node* a[],int v);
-void count_matrix_components(int a[][MAX_NODE], int v);
-void count_list_components(node* a[], int v);
-// BFS search
-int son_of_root;
-int order;
-void AP_recur_starter(node* a[], int v);
-int AP_recur(node* a[], int i);
-// Spanning tree - articulation point
-int main()
-{
-	int v, e;
-	
-	input_adjmatrix(GM, &v, &e);
-	print_adjmatrix(GM, v);
-	printf("< Recursive >\n");
-	DFS_recur_matrix_starter(GM, v);
-	printf("< NonRecursive >\n");
-	DFS_nonrecur_matrix(GM, v);
-	printf("< BFS Search >\n");
-	BFS_adjmatrix(GM, v);
-	printf("< Graph # count >\n");
-	count_matrix_components(GM, v);
-	
-	input_adjlist(GL, &v, &e);
-	print_adjlist(GL, v);
-	printf("< Recursive >\n");
-	DFS_recur_list_starter(GL, v);
-	printf("< NonRecursive >\n");
-	DFS_nonrecur_list(GL, v);
-	printf("< BFS Search >\n");
-	BFS_adjlist(GL, v);
-	printf("< Graph # count >\n");
-	count_list_components(GL, v);
-	printf("< Articulation point >\n");
-	AP_recur_starter(GL, v);
-
-	return 0;
-}
-int push(int n)
-{
-	if (top >= Max - 1)
-	{
-		printf("Stack Overflow!\n");
-		return -1;
-	}
-
-
-	stack[++top] = n;
-	return n;
-};
-int pop()
-{
-	if (top < 0)
-	{
-		printf("Stack Underflow\n");
-		return -1;
-	}
-	else
-		return stack[top--];
-}
-// stack
-int put(int k)
-{
-	dnode* t = malloc(sizeof(dnode));
-	if (t == NULL)
-	{
-		printf("Out of memory !\n");
-		return -1;
-	}
-	t->key = k;
-	
-	tail->prev->next = t;
-	t->prev = tail->prev;
-	tail->prev = t;
-	t->next = tail;
-
-	return k;
-};
-int get()
-{
-	int k;
-	dnode* t = head->next;
-	if (t == tail)
-	{
-		printf("Queue underflow (Que is empty)!\n");
-		return -1;
-	}
-	k = t->key;
-	head->next = t->next;
-	t->next->prev = head;
-
-	free(t);
-	return k;
-};
-void init_queue()
-{
-	head = (dnode*)calloc(1, sizeof(dnode));
-	tail = (dnode*)calloc(1, sizeof(dnode));
-
-	head->next = tail;
-	head->prev = head;
-	tail->next = tail;
-	tail->prev = head;
-}
-void end_queue()
-{
-	dnode* t = head;
-
-	if (head->next == tail)
-	{
-		free(head);
-		free(tail);
-	}
-	else
-	{
-		do
-		{
-			dnode* k = t;
-			t = k->next;
-			free(k);
-		} while (t != tail);
-		free(t);
-	}
-	
-}
-int queue_empty()
-{
-	if (head->next == tail)
-		return 1;
-	else
-		return 0;
-};
-// queue
+// int <-> name
 void input_adjmatrix(int a[][MAX_NODE], int* v, int* e)
 {
 	printf("\nInput number of node & edge\n");
@@ -276,13 +102,13 @@ void print_adjlist(int* a[], int v)
 
 	}
 }
-// graph representation
+// graph representation and view
 void DFS_recur_matrix_starter(int a[][MAX_NODE], int v)
 {
 	for (int i = 0; i < v; i++)
 		check[i] = 0;
 
-	for (int i = 0;  i< v;i++)
+	for (int i = 0; i < v; i++)
 	{
 		if (check[i] == 0)
 			DFS_recur_matrix(a, v, i);
@@ -316,7 +142,7 @@ void DFS_nonrecur_matrix(int a[][MAX_NODE], int v)
 			check[i] = 1;
 			while (top >= 0)
 			{
-				i = pop();                         
+				i = pop();
 				printf("Visit %c\n", int_to_name(i));
 				for (int k = 0; k < v; k++)
 				{
@@ -454,14 +280,14 @@ void count_matrix_components(int a[][MAX_NODE], int v)
 		if (check[i] == 0)
 		{
 			put(i);
-			check[i]=1;
+			check[i] = 1;
 			cnt++;
 			while (!queue_empty())
 			{
 				i = get();
 				for (int j = 0; j < v; j++)
 				{
-					if ((a[i][j] == 1)&& (check[j] == 0))
+					if ((a[i][j] == 1) && (check[j] == 0))
 					{
 						put(j);
 						check[j] = 1;
@@ -526,7 +352,7 @@ void AP_recur_starter(node* a[], int v)
 		son_of_root = 0;
 		order = 0;
 	}
-	
+
 
 }
 int AP_recur(node* a[], int i)
@@ -542,7 +368,7 @@ int AP_recur(node* a[], int i)
 
 	for (node* t = a[i]; t != NULL; t = t->next)
 	{
-		if ((flag_root==1) && (check[t->vertex] == 0))
+		if ((flag_root == 1) && (check[t->vertex] == 0))
 			son_of_root++;
 
 		if (check[t->vertex] == 0)

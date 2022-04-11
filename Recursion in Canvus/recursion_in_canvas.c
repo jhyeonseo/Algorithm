@@ -15,8 +15,9 @@ void recursive_line(int x1, int y1, int x2, int y2); // (x1,y1)부터 (x2,y2)까지 
 
 int main()
 {
-	int seed_x = 4;
-	int seed_y = 3;
+
+	int seed_x = 14;
+	int seed_y = 14;
 	srand(time(NULL));
 
 	canvas_border(seed_y, seed_x, 0);
