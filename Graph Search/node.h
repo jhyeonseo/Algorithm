@@ -3,6 +3,7 @@
 typedef struct _node
 {
 	int vertex;
+	int weight;
 	struct _node* next;
 }node;
 typedef struct _dnode

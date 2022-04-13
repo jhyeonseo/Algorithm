@@ -55,32 +55,30 @@ void print_adjmatrix(int a[][MAX_NODE], int v)
 
 
 }
-void input_adjlist(int* a[], int* v, int* e)
+void input_adjlist(int* a[], int* v, int* e, FILE* fp)
 {
-	printf("\nInput number of node & edge\n");
-	scanf("%d %d", v, e);
-	for (int i = 0; i < *v; i++)
-		a[i] = NULL;
+	fscanf(fp, "%d %d", v, e);
+	for (int i = 0; i < *v; i++)a[i] = NULL;
 
 	char vertex[3];
+	int weight;
 	for (int i = 0; i < *e; i++)
 	{
-		printf("\nInput two node consist of edge : ");
-		scanf("%s", vertex);
+		fscanf(fp, "%s %d", vertex, &weight);
 
-		int v0 = name_to_int(vertex[0]);
-		int v1 = name_to_int(vertex[1]);
-
-		node* t = (node*)malloc(sizeof(node));
-		t->vertex = name_to_int(vertex[0]);
-		t->next = a[v1];
-		a[v1] = t;
-
-		t = (node*)malloc(sizeof(node));
+		node* t = malloc(sizeof(node));
 		t->vertex = name_to_int(vertex[1]);
-		t->next = a[v0];
-		a[v0] = t;
+		t->weight = weight;
+		t->next = a[name_to_int(vertex[0])];
+		a[name_to_int(vertex[0])] = t;
+
+		t = malloc(sizeof(node));
+		t->vertex = name_to_int(vertex[0]);
+		t->weight = weight;
+		t->next = a[name_to_int(vertex[1])];
+		a[name_to_int(vertex[1])] = t;
 	}
+
 }
 void print_adjlist(int* a[], int v)
 {
@@ -92,7 +90,7 @@ void print_adjlist(int* a[], int v)
 		{
 			if (temp != NULL)
 			{
-				printf("->%c", int_to_name(temp->vertex));
+				printf(" ->%c:%d", int_to_name(temp->vertex),(temp->weight));
 				temp = temp->next;
 			}
 			else
@@ -101,6 +99,19 @@ void print_adjlist(int* a[], int v)
 		printf("\n");
 
 	}
+}
+void print_tree(int v)
+{
+	printf("son    ");
+	for (int i = 0; i < v; i++)
+		printf("%c ", int_to_name(i));
+	printf("\nparent ");
+	for (int i = 0; i < v; i++)
+		if (parent[i] != -1)
+			printf("%c ", int_to_name(parent[i]));
+		else
+			printf("X ");
+	printf("\n");
 }
 // graph representation and view
 void DFS_recur_matrix_starter(int a[][MAX_NODE], int v)
@@ -333,6 +344,63 @@ void count_list_components(node* a[], int v)
 	end_queue();
 }
 // BFS search
+void PFS_adjlist(node* a[], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		check[i] = -INT_MAX; // -INT_MAX = UNSEEN, -INT_MAX 제외 음수 = fringe node, 양수 = 방문
+		parent[i] = -1;
+	}
+	init_heap();
+
+	for (int i = 0; i < v; i++)
+	{
+		if (check[i] == -INT_MAX)   
+		{
+			pq_update(i, -INT_MAX); // ROOT 갱신
+
+			while (heap_size != 0)
+			{
+				int j = extract();
+
+				check[j] = -check[j]; // 방문 가중치로 변경
+
+				if (check[j] == INT_MAX)
+					printf("<Root %c>\n", int_to_name(j));
+				else
+				printf("visit %c(%d)\n", int_to_name(j), check[j]);  // visit
+
+				for (node* t = a[j]; t != NULL; t = t->next)
+				{
+					if (check[t->vertex] < 0) // 아직 방문 안한 노드일때,
+						if (pq_update(t->vertex, -(t->weight))) // 힙, 가중치 갱신 후 변경사항이 있으면 부모를 갱신해줌 (UNSEEN노드면 첫 갱신후 첫 부모 설정) 
+							parent[t->vertex] = j;
+				}
+			}
+
+		}
+
+	}
+
+}
+int pq_update(int v, int w)
+{
+	if (check[v] == -INT_MAX)  // 첫 갱신일때 -> check 설정, 힙에 새로 삽입
+	{
+		check[v] = w;
+		insert(v);
+		return 1;
+	}
+	else if (check[v] < w)  // 첫 갱신은 아니나 가중치 업데이트가 필요할 때 -> check 설정, 힙 재정렬
+	{
+		check[v] = w;
+		adjust_heap(v);
+		return 1;
+	}
+	else            // 첫 갱신도 아니고 가중치 업데이트도 필요 없을때
+		return 0;
+}
+// PFS search
 void AP_recur_starter(node* a[], int v)
 {
 	order = son_of_root = 0;
