@@ -1,5 +1,5 @@
 #pragma once
-#define MAX_NODE 100
+#define MAX_NODE 1000
 typedef struct _node
 {
 	int vertex;

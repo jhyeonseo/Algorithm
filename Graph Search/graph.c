@@ -6,9 +6,7 @@
 #include"node.h"
 #include"heap.h"
 
-int name_to_int(char c) { return c - 'A'; };
-char int_to_name(int i) { return i + 'A'; };
-// int <-> name
+// graph representation and view
 void input_adjmatrix(int a[][MAX_NODE], int* v, int* e)
 {
 	printf("\nInput number of node & edge\n");
@@ -55,7 +53,7 @@ void print_adjmatrix(int a[][MAX_NODE], int v)
 
 
 }
-void input_adjlist(int* a[], int* v, int* e, FILE* fp)
+void input_adjlist(node* a[], int* v, int* e, FILE* fp)
 {
 	fscanf(fp, "%d %d", v, e);
 	for (int i = 0; i < *v; i++)a[i] = NULL;
@@ -80,7 +78,7 @@ void input_adjlist(int* a[], int* v, int* e, FILE* fp)
 	}
 
 }
-void print_adjlist(int* a[], int v)
+void print_adjlist(node* a[], int v)
 {
 	for (int i = 0; i < v; i++)
 	{
@@ -113,7 +111,20 @@ void print_tree(int v)
 			printf("X ");
 	printf("\n");
 }
-// graph representation and view
+void print_score(int v)
+{
+	int score = 0;
+
+	for (int i = 0; i < v; i++)
+		if (check[i] != INT_MAX)
+			score += check[i];
+
+	printf("score = %d\n", score);
+}
+// int <-> name
+int name_to_int(char c) { return c - 'A'; };
+char int_to_name(int i) { return i + 'A'; };
+// DFS search
 void DFS_recur_matrix_starter(int a[][MAX_NODE], int v)
 {
 	for (int i = 0; i < v; i++)
@@ -224,7 +235,7 @@ void DFS_nonrecur_list(node* a[], int v)
 		}
 	}
 };
-// DFS search
+// BFS search
 void BFS_adjmatrix(int a[][MAX_NODE], int v)
 {
 	init_queue();
@@ -343,12 +354,12 @@ void count_list_components(node* a[], int v)
 	printf("# of CC: %d\n", cnt);
 	end_queue();
 }
-// BFS search
+// PFS search
 void PFS_adjlist(node* a[], int v)
 {
 	for (int i = 0; i < v; i++)
 	{
-		check[i] = -INT_MAX; // -INT_MAX = UNSEEN, -INT_MAX 제외 음수 = fringe node, 양수 = 방문
+		check[i] = -INT_MAX; // -INT_MAX = UNSEEN, -INT_MAX 제외 음수 = fringe node, 양수 = 방문, INT_MAX = ROOT 노드 
 		parent[i] = -1;
 	}
 	init_heap();
@@ -400,7 +411,7 @@ int pq_update(int v, int w)
 	else            // 첫 갱신도 아니고 가중치 업데이트도 필요 없을때
 		return 0;
 }
-// PFS search
+// Spanning tree - articulation point
 void AP_recur_starter(node* a[], int v)
 {
 	order = son_of_root = 0;
@@ -459,4 +470,3 @@ int AP_recur(node* a[], int i)
 
 	return min;
 };
-// Spanning tree - articulation point

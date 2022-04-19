@@ -16,6 +16,7 @@ int main()
 
 	PFS_adjlist(GL, v);
 	print_tree(v);
+	print_score(v);
 
 	fclose(fp);
 	
