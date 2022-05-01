@@ -1,11 +1,5 @@
 #pragma once
-#define MAX_NODE 1000
-typedef struct _node
-{
-	int vertex;
-	int weight;
-	struct _node* next;
-}node;
+
 typedef struct _dnode
 {
 	struct _dnode* prev;

@@ -2,9 +2,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include"graph.h"
-#include"stack.h"
-#include"node.h"
-#include"heap.h"
+
 
 // graph representation and view
 void input_adjmatrix(int a[][MAX_NODE], int* v, int* e)
@@ -96,6 +94,21 @@ void print_adjlist(node* a[], int v)
 		}
 		printf("\n");
 
+	}
+}
+void input_edge(edge edge[], int* v, int* e, FILE* fp)
+{
+	char vertex[3];
+	fscanf(fp, "%d %d", v, e);
+
+	int weight;
+	for (int i = 0; i < *e; i++)
+	{
+		fscanf(fp, "%s %d", vertex, &weight);
+
+		edge[i].v1 = name_to_int(vertex[0]);
+		edge[i].v2 = name_to_int(vertex[1]);
+		edge[i].weight = weight;
 	}
 }
 void print_tree(int v)
@@ -368,7 +381,7 @@ void PFS_adjlist(node* a[], int v)
 	{
 		if (check[i] == -INT_MAX)   
 		{
-			pq_update(i, -INT_MAX); // ROOT 갱신
+			heap_update(i, -INT_MAX); // ROOT 갱신
 
 			while (heap_size != 0)
 			{
@@ -384,7 +397,7 @@ void PFS_adjlist(node* a[], int v)
 				for (node* t = a[j]; t != NULL; t = t->next)
 				{
 					if (check[t->vertex] < 0) // 아직 방문 안한 노드일때,
-						if (pq_update(t->vertex, -(t->weight))) // 힙, 가중치 갱신 후 변경사항이 있으면 부모를 갱신해줌 (UNSEEN노드면 첫 갱신후 첫 부모 설정) 
+						if (heap_update(t->vertex, -(t->weight))) // 힙, 가중치 갱신 후 변경사항이 있으면 부모를 갱신해줌 (UNSEEN노드면 첫 갱신후 첫 부모 설정) 
 							parent[t->vertex] = j;
 				}
 			}
@@ -394,22 +407,53 @@ void PFS_adjlist(node* a[], int v)
 	}
 
 }
-int pq_update(int v, int w)
+void kruskal(edge edge[], int v, int e)
 {
-	if (check[v] == -INT_MAX)  // 첫 갱신일때 -> check 설정, 힙에 새로 삽입
+	for (int i = 0; i < v; i++)
+		parent[i] = -1;
+	init_heap();
+
+	for (int i = 0; i < e; i++)
 	{
-		check[v] = w;
-		insert(v);
-		return 1;
+		check[i] = -edge[i].weight;
+		insert(i);
 	}
-	else if (check[v] < w)  // 첫 갱신은 아니나 가중치 업데이트가 필요할 때 -> check 설정, 힙 재정렬
+	int val;
+	int n = 0;
+	while (heap_size != 0)
 	{
-		check[v] = w;
-		adjust_heap(v);
-		return 1;
+		val = extract();
+
+		if (!find_set(edge[val].v1, edge[val].v2))
+		{
+			union_set(edge[val].v1, edge[val].v2);
+			printf("Visit Edge between %c %c\n", int_to_name(edge[val].v1), int_to_name(edge[val].v2));
+			n++;
+		}
+
+		if (n == v - 1)
+			break;
 	}
-	else            // 첫 갱신도 아니고 가중치 업데이트도 필요 없을때
-		return 0;
+
+
+}
+int find_set(int a, int b)
+{
+	int i = a;
+	int j = b;
+
+	while (parent[i] >= 0)   // a의 조상 찾기
+		i = parent[i];            
+	
+	while (parent[j] >= 0)   // b의 조상 찾기
+		j = parent[j];   
+
+	return i == j;           // 조상이 같으면 1 리턴
+}
+void union_set(int a, int b)
+{
+	parent[b] = a;
+	return;
 }
 // Spanning tree - articulation point
 void AP_recur_starter(node* a[], int v)

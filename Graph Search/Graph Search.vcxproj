@@ -142,13 +142,13 @@
     <ClCompile Include="graph.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="heap.c" />
-    <ClCompile Include="node.c" />
+    <ClCompile Include="queue.c" />
     <ClCompile Include="stack.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graph.h" />
     <ClInclude Include="heap.h" />
-    <ClInclude Include="node.h" />
+    <ClInclude Include="queue.h" />
     <ClInclude Include="stack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

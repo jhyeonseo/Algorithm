@@ -46,6 +46,23 @@ int extract()
 	heap[k] = v;
 	return top;
 };
+int heap_update(int v, int w)
+{
+	if (check[v] == -INT_MAX)  // 첫 갱신일때 -> check 설정, 힙에 새로 삽입
+	{
+		check[v] = w;
+		insert(v);
+		return 1;
+	}
+	else if (check[v] < w)  // 첫 갱신은 아니나 가중치 업데이트가 필요할 때 -> check 설정, 힙 재정렬
+	{
+		check[v] = w;
+		adjust_heap(v);
+		return 1;
+	}
+	else            // 첫 갱신도 아니고 가중치 업데이트도 필요 없을때
+		return 0;
+}
 void adjust_heap(int v)
 {
 	int k;

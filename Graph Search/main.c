@@ -2,21 +2,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "stack.h"
-#include "node.h"
+#include "queue.h"
 #include"heap.h"
 #include"graph.h"
+
+node* GL[MAX_NODE];
+edge Edge[MAX_NODE];
+int GM[MAX_NODE][MAX_NODE];
 
 int main()
 {
 	int v, e;
 	FILE* fp = fopen("graph.txt", "rt");
 
-	input_adjlist(GL, &v, &e,fp);
-	print_adjlist(GL, v);
+	input_edge(Edge, &v, &e, fp);
 
-	PFS_adjlist(GL, v);
+	kruskal(Edge, v, e);
+
 	print_tree(v);
-	print_score(v);
 
 	fclose(fp);
 	

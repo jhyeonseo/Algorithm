@@ -1,18 +1,30 @@
 #pragma once
-#include"graph.h"
 #include"stack.h"
-#include"node.h"
+#include"queue.h"
 #include"heap.h"
 
+#define MAX_NODE 1000
+
 // graph representation
-int GM[MAX_NODE][MAX_NODE];
-node* GL[MAX_NODE];
+typedef struct _node
+{
+	int vertex;
+	int weight;
+	struct _node* next;
+}node;
+typedef struct edge
+{
+	int v1, v2;
+	int weight;
+}edge;
 int check[MAX_NODE];
 int parent[MAX_NODE];
+// graph making & print
 void input_adjmatrix(int a[][MAX_NODE], int* v, int* e);
 void print_adjmatrix(int a[][MAX_NODE], int v);
 void input_adjlist(node* a[], int* v, int* e, FILE* fp);
 void print_adjlist(node* a[], int v);
+void input_edge(edge edge[], int* v, int* e, FILE* fp);
 void print_tree(int v);
 void print_score(int v);
 // int <-> name
@@ -32,7 +44,9 @@ void count_matrix_components(int a[][MAX_NODE], int v);
 void count_list_components(node* a[], int v);
 // PFS search
 void PFS_adjlist(node* a[], int v);
-int pq_update(int v, int w);
+void kruskal(edge edge[], int v, int e);
+int find_set(int a, int b);
+void union_set(int a, int b);
 // Spanning tree - articulation point
 int son_of_root;
 int order;
