@@ -6,21 +6,27 @@
 #include"heap.h"
 #include"graph.h"
 
-node* GL[MAX_NODE];
-edge Edge[MAX_NODE];
-int GM[MAX_NODE][MAX_NODE];
+
 
 int main()
 {
+	node* GL[MAX_NODE];
+	edge Edge[MAX_NODE];
+	int GM[MAX_NODE][MAX_NODE];
 	int v, e;
+
 	FILE* fp = fopen("graph.txt", "rt");
+	//input_adjmatrix(GM, &v, &e, fp);
+	//print_adjmatrix(GM, v);
+	input_adjlist(GL, &v, &e, fp);
+	print_adjlist(GL, v);
 
-	input_edge(Edge, &v, &e, fp);
+	//dijkstra(GM, name_to_int('F'), v);
+	shortest_adjlist(GL, name_to_int('F'), v);
+	
 
-	kruskal(Edge, v, e);
 
 	print_tree(v);
-
 	fclose(fp);
 	
 	return 0;

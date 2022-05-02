@@ -6,7 +6,7 @@ top = -1;
 
 int push(int n)
 {
-	if (top >= Max - 1)
+	if (top >= MAX_STACK - 1)
 	{
 		printf("Stack Overflow!\n");
 		return -1;

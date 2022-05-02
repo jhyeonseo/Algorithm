@@ -5,29 +5,24 @@
 
 
 // graph representation and view
-void input_adjmatrix(int a[][MAX_NODE], int* v, int* e)
+void input_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE *fp)
 {
-	printf("\nInput number of node & edge\n");
-	scanf("%d %d", v, e);
+	fscanf(fp, "%d %d", v, e);
 
 	for (int i = 0; i < *v; i++)
 	{
 		for (int j = 0; j < *v; j++)
 			a[i][j] = 0;
 	}
-	for (int i = 0; i < *v; i++)
-		a[i][i] = 1;
 
 	char vertex[3];
+	int weight;
 	for (int i = 0; i < *e; i++)
 	{
-		printf("\nInput two node consist of edge : ");
-		scanf("%s", vertex);
+		fscanf(fp, "%s %d", vertex, &weight);
 
-		int v1 = name_to_int(vertex[0]);
-		int v2 = name_to_int(vertex[1]);
-		a[v1][v2] = 1;
-		a[v2][v1] = 1;
+		a[name_to_int(vertex[0])][name_to_int(vertex[1])] = weight;
+		a[name_to_int(vertex[1])][name_to_int(vertex[0])] = weight;
 	}
 
 
@@ -381,7 +376,7 @@ void PFS_adjlist(node* a[], int v)
 	{
 		if (check[i] == -INT_MAX)   
 		{
-			heap_update(i, -INT_MAX); // ROOT 갱신
+			heap_update(i, 0); // ROOT 갱신
 
 			while (heap_size != 0)
 			{
@@ -389,7 +384,7 @@ void PFS_adjlist(node* a[], int v)
 
 				check[j] = -check[j]; // 방문 가중치로 변경
 
-				if (check[j] == INT_MAX)
+				if (check[j] == 0)
 					printf("<Root %c>\n", int_to_name(j));
 				else
 				printf("visit %c(%d)\n", int_to_name(j), check[j]);  // visit
@@ -454,6 +449,100 @@ void union_set(int a, int b)
 {
 	parent[b] = a;
 	return;
+}
+// Shortest path
+void shortest_adjlist(node* a[], int start, int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		check[i] = -INT_MAX; // -INT_MAX = UNSEEN, -INT_MAX 제외 음수 = fringe node, 양수 = 방문, INT_MAX = ROOT 노드 
+		parent[i] = -1;
+	}
+	init_heap();
+
+	
+	heap_update(start, 0);   // ROOT start로 갱신
+
+	while (heap_size != 0)
+	{
+		int j = extract();
+
+		check[j] = -check[j]; // 방문 가중치로 변경
+
+		if (check[j] == 0)
+			printf("<Root %c>\n", int_to_name(j));
+		else
+			printf("visit %c(%d)\n", int_to_name(j), check[j]);  // visit
+
+		for (node* t = a[j]; t != NULL; t = t->next)
+		{
+			if (check[t->vertex] < 0) // 아직 방문 안한 노드일때,
+				if (heap_update(t->vertex, -(t->weight)-check[j])) // 힙, 가중치 갱신 후 변경사항이 있으면 부모를 갱신해줌 (UNSEEN노드면 첫 갱신후 첫 부모 설정) 
+					parent[t->vertex] = j;
+		}
+	}
+
+}
+void dijkstra(int a[][MAX_NODE], int start, int v)
+{
+	for (int i = 0; i < v; i++)
+		for (int j = 0; j < v; j++)
+			if (a[i][j] == 0 && i != j)
+				a[i][j] = INT_MAX;         // 간선이 존재하지 않는곳에 가중치 부여
+
+	for (int i = 0; i < v; i++)
+		check[i] = 0;
+	init_heap();
+	
+	int* distance = (int*)malloc(sizeof(int) * v);
+	for (int i = 0; i < v; i++)
+	{
+		distance[i] = a[start][i];
+		parent[i] = start;        
+	}
+
+	int count = 0;
+	int x = start;
+	check[x] = 1;
+	parent[x] = -1;
+	printf("<Root %c>\n", int_to_name(x));
+	while (count != v - 1)
+	{
+		int d = INT_MAX;
+		for (int i = 0; i < v; i++)
+			if (distance[i] < d && check[i] == 0)
+			{
+				x = i;                                      
+				d = distance[x];
+			}    // 현재 노드에서 가장 가까운 노드로 이동
+		check[x] = 1;                                        
+		count++;
+		printf("visit %c(%d)\n", int_to_name(x), distance[x]);
+
+		for(int i=0;i<v;i++)
+			if (a[x][i] != INT_MAX && check[i] == 0)
+			{
+				if (distance[x] + a[x][i] < distance[i])
+				{
+					distance[i] = distance[x] + a[x][i];
+					parent[i] = x;                          // 이동한 노드와 연결된 노드의 distance 갱신 & parent 갱신
+				}
+
+			}
+	}
+
+	printf("<Distance with %c>\n", int_to_name(start));
+	for (int i = 0; i < v; i++)
+		printf("%c ", int_to_name(i));
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		if (distance[i] != 0)
+			printf("%d ", distance[i]);
+		else
+			printf("X ");
+	printf("\n");
+
+	free(distance);
 }
 // Spanning tree - articulation point
 void AP_recur_starter(node* a[], int v)

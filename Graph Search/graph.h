@@ -3,7 +3,7 @@
 #include"queue.h"
 #include"heap.h"
 
-#define MAX_NODE 1000
+#define MAX_NODE 100
 
 // graph representation
 typedef struct _node
@@ -20,7 +20,7 @@ typedef struct edge
 int check[MAX_NODE];
 int parent[MAX_NODE];
 // graph making & print
-void input_adjmatrix(int a[][MAX_NODE], int* v, int* e);
+void input_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE* fp);
 void print_adjmatrix(int a[][MAX_NODE], int v);
 void input_adjlist(node* a[], int* v, int* e, FILE* fp);
 void print_adjlist(node* a[], int v);
@@ -47,6 +47,9 @@ void PFS_adjlist(node* a[], int v);
 void kruskal(edge edge[], int v, int e);
 int find_set(int a, int b);
 void union_set(int a, int b);
+// Shortest path
+void shortest_adjlist(node* a[], int start, int v);
+void dijkstra(int a[][MAX_NODE], int start, int v);
 // Spanning tree - articulation point
 int son_of_root;
 int order;
