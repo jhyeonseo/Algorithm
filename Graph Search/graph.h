@@ -21,8 +21,10 @@ int check[MAX_NODE];
 int parent[MAX_NODE];
 // graph making & print
 void input_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE* fp);
+void input_directed_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE* fp);
 void print_adjmatrix(int a[][MAX_NODE], int v);
 void input_adjlist(node* a[], int* v, int* e, FILE* fp);
+void input_directed_adjlist(node* a[], int* v, int* e, FILE* fp);
 void print_adjlist(node* a[], int v);
 void input_edge(edge edge[], int* v, int* e, FILE* fp);
 void print_tree(int v);
@@ -33,10 +35,12 @@ char int_to_name(int i);
 // DFS search
 void DFS_recur_matrix_starter(int a[][MAX_NODE], int v);
 void DFS_recur_matrix(int a[][MAX_NODE], int v, int i);
-void DFS_nonrecur_matrix(int a[][MAX_NODE], int v);
+void DFS_adjmatrix(int a[][MAX_NODE], int v);
+void DFS_directed_adjmatrix(int a[][MAX_NODE], int v);
 void DFS_recur_list_starter(node* a[], int v);
 void DFS_recur_list(node* a[], int v, int i);
-void DFS_nonrecur_list(node* a[], int v);
+void DFS_adjlist(node* a[], int v);
+void DFS_directed_adjlist(node* a[], int v);
 // BFS search
 void BFS_adjmatrix(int a[][MAX_NODE], int v);
 void BFS_adjlist(node* a[], int v);
@@ -55,3 +59,5 @@ int son_of_root;
 int order;
 void AP_recur_starter(node* a[], int v);
 int AP_recur(node* a[], int i);		
+// Reachability
+void warshall_adjmatrix(int a[][MAX_NODE], int v);

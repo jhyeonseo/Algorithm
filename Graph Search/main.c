@@ -16,17 +16,13 @@ int main()
 	int v, e;
 
 	FILE* fp = fopen("graph.txt", "rt");
-	//input_adjmatrix(GM, &v, &e, fp);
-	//print_adjmatrix(GM, v);
-	input_adjlist(GL, &v, &e, fp);
-	print_adjlist(GL, v);
-
-	//dijkstra(GM, name_to_int('F'), v);
-	shortest_adjlist(GL, name_to_int('F'), v);
-	
+	input_directed_adjmatrix(GM, &v, &e, fp);
+	print_adjmatrix(GM, v);
+	DFS_directed_adjmatrix(GM, v);
+	warshall_adjmatrix(GM, v);
+	print_adjmatrix(GM, v);
 
 
-	print_tree(v);
 	fclose(fp);
 	
 	return 0;

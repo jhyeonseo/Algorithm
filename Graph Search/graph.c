@@ -27,6 +27,27 @@ void input_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE *fp)
 
 
 }
+void input_directed_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE* fp)
+{
+	fscanf(fp, "%d %d", v, e);
+
+	for (int i = 0; i < *v; i++)
+	{
+		for (int j = 0; j < *v; j++)
+			a[i][j] = 0;
+	}
+
+	char vertex[3];
+	int weight;
+	for (int i = 0; i < *e; i++)
+	{
+		fscanf(fp, "%s %d", vertex, &weight);
+
+		a[name_to_int(vertex[0])][name_to_int(vertex[1])] = weight;
+	}
+
+
+}
 void print_adjmatrix(int a[][MAX_NODE], int v)
 {
 	printf("  ");
@@ -68,6 +89,25 @@ void input_adjlist(node* a[], int* v, int* e, FILE* fp)
 		t->weight = weight;
 		t->next = a[name_to_int(vertex[1])];
 		a[name_to_int(vertex[1])] = t;
+	}
+
+}
+void input_directed_adjlist(node* a[], int* v, int* e, FILE* fp)
+{
+	fscanf(fp, "%d %d", v, e);
+	for (int i = 0; i < *v; i++)a[i] = NULL;
+
+	char vertex[3];
+	int weight;
+	for (int i = 0; i < *e; i++)
+	{
+		fscanf(fp, "%s %d", vertex, &weight);
+
+		node* t = (node *)malloc(sizeof(node));
+		t->vertex = name_to_int(vertex[1]);
+		t->weight = weight;
+		t->next = a[name_to_int(vertex[0])];
+		a[name_to_int(vertex[0])] = t;
 	}
 
 }
@@ -122,10 +162,10 @@ void print_tree(int v)
 void print_score(int v)
 {
 	int score = 0;
-
 	for (int i = 0; i < v; i++)
-		if (check[i] != INT_MAX)
+		if ((check[i] > 0) && (check[i] != INT_MAX))
 			score += check[i];
+		
 
 	printf("score = %d\n", score);
 }
@@ -158,10 +198,13 @@ void DFS_recur_matrix(int a[][MAX_NODE], int v, int i)
 		}
 	}
 };
-void DFS_nonrecur_matrix(int a[][MAX_NODE], int v)
+void DFS_adjmatrix(int a[][MAX_NODE], int v)
 {
 	for (int i = 0; i < v; i++)
+	{
 		check[i] = 0;
+		parent[i] = -1;
+	}
 	top = -1;
 
 	for (int i = 0; i < v; i++)
@@ -169,27 +212,84 @@ void DFS_nonrecur_matrix(int a[][MAX_NODE], int v)
 		if (check[i] == 0)
 		{
 			push(i);
-			check[i] = 1;
+			check[i] = INT_MAX;
+			parent[i] = -1;
+			int start_flag = 1;
+
 			while (top >= 0)
 			{
-				i = pop();
-				printf("Visit %c\n", int_to_name(i));
+				int j = pop();
+				if (start_flag)
+				{
+					printf("\nSTART %c", int_to_name(j));
+					start_flag = 0;
+				}
+				else
+				printf(" -> %c", int_to_name(j));
+
 				for (int k = 0; k < v; k++)
 				{
-					if ((a[i][k] == 1) && (check[k] == 0))
+					if ((a[j][k] != 0) && (check[k] == 0))
 					{
 						push(k);
-						check[k] = 1;
+						check[k] = a[j][k];
+						parent[k] = j;
 					}
 				}
 			}
 		}
 	}
 
+	printf("\n");
+	return;
+}
+void DFS_directed_adjmatrix(int a[][MAX_NODE], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		check[i] = 0;
+		parent[i] = -1;
+	}
+	top = -1;
 
+	for (int i = 0; i < v; i++)
+	{
+		for (int j = 0; j < v; j++)
+		{
+			check[j] = 0;
+			parent[j] = -1;
+		}
 
+		push(i);
+		check[i] = INT_MAX;
+		parent[i] = -1;
+		int start_flag = 1;
 
+		while (top >= 0)
+		{
+			int j = pop();
+			if (start_flag)
+			{
+				printf("\nSTART %c", int_to_name(j));
+				start_flag = 0;
+			}
+			else
+				printf(" -> %c", int_to_name(j));
 
+			for (int k = 0; k < v; k++)
+			{
+				if ((a[j][k] != 0) && (check[k] == 0))
+				{
+					push(k);
+					check[k] = a[j][k];
+					parent[k] = j;
+				}
+			}
+		}
+	}
+
+	printf("\n");
+	return;
 }
 void DFS_recur_list_starter(node* a[], int v)
 {
@@ -214,11 +314,13 @@ void DFS_recur_list(node* a[], int v, int i)
 	}
 
 };
-void DFS_nonrecur_list(node* a[], int v)
+void DFS_adjlist(node* a[], int v)
 {
 	for (int i = 0; i < v; i++)
+	{
 		check[i] = 0;
-
+		parent[i] = -1;
+	}
 	top = -1;
 
 	for (int i = 0; i < v; i++)
@@ -226,71 +328,216 @@ void DFS_nonrecur_list(node* a[], int v)
 		if (check[i] == 0)
 		{
 			push(i);
-			check[i] = 1;
+			check[i] = INT_MAX;
+			parent[i] = -1;
+			int start_flag = 1;
+
 			while (top >= 0)
 			{
-				i = pop();
-				printf("Visit %c\n", int_to_name(i));
-				for (node* k = a[i]; k != NULL; k = k->next)
+				int j = pop();
+				if (start_flag)
+				{
+					printf("\nSTART %c", int_to_name(j));
+					start_flag = 0;
+				}
+				else
+					printf(" -> %c", int_to_name(j));
+
+				for (node* k = a[j]; k != NULL; k = k->next)
 				{
 					if (check[k->vertex] == 0)
 					{
 						push(k->vertex);
-						check[k->vertex] = 1;
+						check[k->vertex] = k->weight;
+						parent[k->vertex] = j;
 					}
 				}
 			}
 		}
 	}
+
+	printf("\n");
 };
+void DFS_directed_adjlist(node* a[], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		check[i] = 0;
+		parent[i] = -1;
+	}
+	top = -1;
+
+	for (int i = 0; i < v; i++)
+	{
+		for (int j = 0; j < v; j++)
+		{
+			check[j] = 0;
+			parent[j] = -1;
+		}
+
+		push(i);
+		check[i] = INT_MAX;
+		parent[i] = -1;
+		int start_flag = 1;
+
+		while (top >= 0)
+		{
+			int j = pop();
+			if (start_flag)
+			{
+				printf("\nSTART %c", int_to_name(j));
+				start_flag = 0;
+			}
+			else
+				printf(" -> %c", int_to_name(j));
+
+			for (node* k = a[j]; k != NULL; k = k->next)
+			{
+				if (check[k->vertex] == 0)
+				{
+					push(k->vertex);
+					check[k->vertex] = k->weight;
+					parent[k->vertex] = j;
+				}
+			}
+		}
+		
+	}
+
+	printf("\n");
+}
 // BFS search
 void BFS_adjmatrix(int a[][MAX_NODE], int v)
 {
+	for (int i = 0; i < v; i++)
+	{ 
+		check[i] = 0;
+		parent[i] = -1;
+	}
 	init_queue();
-	for (int i = 0; i < v; i++) { check[i] = 0; }
+
 	for (int i = 0; i < v; i++)
 	{
 		if (check[i] == 0)
 		{
 			put(i);
-			check[i] = 1;
+			check[i] = INT_MAX;
+			parent[i] = -1;
+			int start_flag = 1;
+
 			while (!queue_empty())
 			{
-				i = get();
-				printf("Visit %c\n", int_to_name(i));
-				for (int j = 0; j < v; j++)
+				int j = get();
+				if (start_flag)
 				{
-					if ((a[i][j] == 1) && (check[j] == 0))
+					printf("\nSTART %c", int_to_name(j));
+					start_flag = 0;
+				}
+				else
+					printf(" -> %c", int_to_name(j));
+
+				for (int k = 0; k < v; k++)
+				{
+					if ((a[j][k] != 0) && (check[k] == 0))
 					{
-						put(j);
-						check[j] = 1;
+						put(k);
+						check[k] = a[j][k];
+						parent[k] = j;
 					}
 				}
 			}
 		}
 	}
 	end_queue();
+	printf("\n");
+	return;
 };
+void BFS_directed_adjmatrix(int a[][MAX_NODE], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		check[i] = 0;
+		parent[i] = -1;
+	}
+	init_queue();
+
+	for (int i = 0; i < v; i++)
+	{
+		for (int j = 0; j < v; j++)
+		{
+			check[j] = 0;
+			parent[j] = -1;
+		}
+
+		put(i);
+		check[i] = INT_MAX;
+		parent[i] = -1;
+		int start_flag = 1;
+
+		while (!queue_empty())
+		{
+			int j = get();
+			if (start_flag)
+			{
+				printf("\nSTART %c", int_to_name(j));
+				start_flag = 0;
+			}
+			else
+				printf(" -> %c", int_to_name(j));
+
+			for (int k = 0; k < v; k++)
+			{
+				if ((a[j][k] != 0) && (check[k] == 0))
+				{
+					put(k);
+					check[k] = a[j][k];
+					parent[k] = j;
+				}
+			}
+		}
+
+		
+	}
+	end_queue();
+	printf("\n");
+	return;
+}
 void BFS_adjlist(node* a[], int v)
 {
+	for (int i = 0; i < v; i++)
+	{
+		check[i] = 0;
+		parent[i] = -1;
+	}
 	init_queue();
-	for (int i = 0; i < v; i++) { check[i] = 0; }
+
 	for (int i = 0; i < v; i++)
 	{
 		if (check[i] == 0)
 		{
 			put(i);
-			check[i] = 1;
+			check[i] = INT_MAX;
+			parent[i] = -1;
+			int start_flag = 1;
+
 			while (!queue_empty())
 			{
-				i = get();
-				printf("Visit %c\n", int_to_name(i));
-				for (node* t = a[i]; t != NULL; t = t->next)
+				int j = get();
+				if (start_flag)
+				{
+					printf("\nSTART %c", int_to_name(j));
+					start_flag = 0;
+				}
+				else
+					printf(" -> %c", int_to_name(j));
+
+				for (node* t = a[j]; t != NULL; t = t->next)
 				{
 					if (check[t->vertex] == 0)
 					{
 						put(t->vertex);
-						check[t->vertex] = 1;
+						check[t->vertex] = t->weight;
+						parent[t->vertex] = j;
 					}
 				}
 			}
@@ -298,7 +545,60 @@ void BFS_adjlist(node* a[], int v)
 	}
 
 	end_queue();
+	printf("\n");
+	return;
 };
+void BFS_directed_adjlist(node* a[], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		check[i] = 0;
+		parent[i] = -1;
+	}
+	init_queue();
+
+	for (int i = 0; i < v; i++)
+	{
+
+		for (int j = 0; j < v; j++)
+		{
+			check[j] = 0;
+			parent[j] = -1;
+		}
+
+		put(i);
+		check[i] = INT_MAX;
+		parent[i] = -1;
+		int start_flag = 1;
+
+		while (!queue_empty())
+		{
+			int j = get();
+			if (start_flag)
+			{
+				printf("\nSTART %c", int_to_name(j));
+				start_flag = 0;
+			}
+			else
+				printf(" -> %c", int_to_name(j));
+
+			for (node* t = a[j]; t != NULL; t = t->next)
+			{
+				if (check[t->vertex] == 0)
+				{
+					put(t->vertex);
+					check[t->vertex] = t->weight;
+					parent[t->vertex] = j;
+				}
+			}
+		}
+		
+	}
+
+	end_queue();
+	printf("\n");
+	return;
+}
 void count_matrix_components(int a[][MAX_NODE], int v)
 {
 	init_queue();
@@ -367,7 +667,7 @@ void PFS_adjlist(node* a[], int v)
 {
 	for (int i = 0; i < v; i++)
 	{
-		check[i] = -INT_MAX; // -INT_MAX = UNSEEN, -INT_MAX 제외 음수 = fringe node, 양수 = 방문, INT_MAX = ROOT 노드 
+		check[i] = -INT_MAX; // -INT_MAX = UNSEEN, -INT_MAX 제외 음수 = fringe node, 양수 = 방문, 0 = ROOT 노드 
 		parent[i] = -1;
 	}
 	init_heap();
@@ -544,7 +844,7 @@ void dijkstra(int a[][MAX_NODE], int start, int v)
 
 	free(distance);
 }
-// Spanning tree - articulation point
+// Articulation point
 void AP_recur_starter(node* a[], int v)
 {
 	order = son_of_root = 0;
@@ -603,3 +903,22 @@ int AP_recur(node* a[], int i)
 
 	return min;
 };
+// Reachability
+void warshall_adjmatrix(int a[][MAX_NODE], int v)
+{
+
+	for (int i = 0; i < v; i++)
+		for (int j = 0; j < v; j++)
+			if (a[i][j] != 0)
+				for (int k = 0; k < v; k++)
+				{
+					if (a[j][k] != 0)
+					{
+						if (a[i][k] == 0)
+							a[i][k] = a[i][j] + a[j][k];
+						else if (a[i][k] > a[i][j] + a[j][k])
+							a[i][k] = a[i][j] + a[j][k];
+					}
+				}
+}
+
