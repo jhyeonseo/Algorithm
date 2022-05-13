@@ -10,18 +10,19 @@
 
 int main()
 {
+	network net[MAX_NODE];
 	node* GL[MAX_NODE];
-	edge Edge[MAX_NODE];
-	int GM[MAX_NODE][MAX_NODE];
+	//int GM[MAX_NODE][MAX_NODE];
 	int v, e;
 
 	FILE* fp = fopen("graph.txt", "rt");
-	input_directed_adjmatrix(GM, &v, &e, fp);
-	print_adjmatrix(GM, v);
-	DFS_directed_adjmatrix(GM, v);
-	warshall_adjmatrix(GM, v);
-	print_adjmatrix(GM, v);
+	input_directed_adjlist(GL, &v, &e, fp);
+	print_adjlist(GL, v);
+	for (int i = 0; i < v; i++)
+		printf("%p\n", GL[i]);
 
+
+	set_indegree(GL, v);
 
 	fclose(fp);
 	

@@ -12,11 +12,16 @@ typedef struct _node
 	int weight;
 	struct _node* next;
 }node;
-typedef struct edge
+typedef struct _edge
 {
 	int v1, v2;
 	int weight;
 }edge;
+typedef struct _network
+{
+	int state;
+	struct _network* next;
+}network;
 int check[MAX_NODE];
 int parent[MAX_NODE];
 // graph making & print
@@ -54,10 +59,13 @@ void union_set(int a, int b);
 // Shortest path
 void shortest_adjlist(node* a[], int start, int v);
 void dijkstra(int a[][MAX_NODE], int start, int v);
+// Topological sorting
+void set_indegree(network net[], int v);
 // Spanning tree - articulation point
 int son_of_root;
 int order;
 void AP_recur_starter(node* a[], int v);
 int AP_recur(node* a[], int i);		
 // Reachability
-void warshall_adjmatrix(int a[][MAX_NODE], int v);
+void floyd(int a[][MAX_NODE], int v);
+void warshall(int a[][MAX_NODE], int v);

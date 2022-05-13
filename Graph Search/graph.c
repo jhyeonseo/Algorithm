@@ -786,11 +786,6 @@ void shortest_adjlist(node* a[], int start, int v)
 void dijkstra(int a[][MAX_NODE], int start, int v)
 {
 	for (int i = 0; i < v; i++)
-		for (int j = 0; j < v; j++)
-			if (a[i][j] == 0 && i != j)
-				a[i][j] = INT_MAX;         // 간선이 존재하지 않는곳에 가중치 부여
-
-	for (int i = 0; i < v; i++)
 		check[i] = 0;
 	init_heap();
 	
@@ -801,31 +796,34 @@ void dijkstra(int a[][MAX_NODE], int start, int v)
 		parent[i] = start;        
 	}
 
-	int count = 0;
 	int x = start;
 	check[x] = 1;
 	parent[x] = -1;
-	printf("<Root %c>\n", int_to_name(x));
-	while (count != v - 1)
+	//printf("<Root %c>\n", int_to_name(x));
+	while (1)
 	{
 		int d = INT_MAX;
+		int flag = 1;
 		for (int i = 0; i < v; i++)
-			if (distance[i] < d && check[i] == 0)
+			if (distance[i] < d && check[i] == 0 && distance[i]!=0)
 			{
-				x = i;                                      
-				d = distance[x];
-			}    // 현재 노드에서 가장 가까운 노드로 이동
+				flag = 0;
+				d = distance[i];
+				x = i;                                      // Start 노드로부터 가장 가까운 노드로 이동 (x = 현재 노드)
+			}
+		if (flag)
+			break;
+
 		check[x] = 1;                                        
-		count++;
-		printf("visit %c(%d)\n", int_to_name(x), distance[x]);
+		//printf("visit %c(%d)\n", int_to_name(x), distance[x]);
 
 		for(int i=0;i<v;i++)
-			if (a[x][i] != INT_MAX && check[i] == 0)
+			if (a[x][i] != 0 && check[i] == 0)
 			{
-				if (distance[x] + a[x][i] < distance[i])
+				if (distance[x] + a[x][i] < distance[i] || distance[i] == 0)
 				{
 					distance[i] = distance[x] + a[x][i];
-					parent[i] = x;                          // 이동한 노드와 연결된 노드의 distance 갱신 & parent 갱신
+					parent[i] = x;                          // 현재 노드와 연결되어있는 노드들의 distance, parent 갱신
 				}
 
 			}
@@ -843,6 +841,27 @@ void dijkstra(int a[][MAX_NODE], int start, int v)
 	printf("\n");
 
 	free(distance);
+}
+// Topological sorting
+void set_indegree(network net[], int v)
+{
+
+	for (int i = 0; i < v; i++)
+	{
+		int count = 0;
+		printf("*%p*\n", net[i]);
+		printf("%d\n", net[i].state);
+		for (int j = 0; j < v; j++)
+			for (node* t = &net[i]; t != NULL; t = t->next)
+			{
+				if (t->vertex == j)
+					count++;
+			}
+		net[i].state = count;
+
+
+	}
+	
 }
 // Articulation point
 void AP_recur_starter(node* a[], int v)
@@ -904,9 +923,8 @@ int AP_recur(node* a[], int i)
 	return min;
 };
 // Reachability
-void warshall_adjmatrix(int a[][MAX_NODE], int v)
+void floyd(int a[][MAX_NODE], int v)
 {
-
 	for (int i = 0; i < v; i++)
 		for (int j = 0; j < v; j++)
 			if (a[i][j] != 0)
@@ -920,5 +938,14 @@ void warshall_adjmatrix(int a[][MAX_NODE], int v)
 							a[i][k] = a[i][j] + a[j][k];
 					}
 				}
+}
+void warshall(int a[][MAX_NODE], int v)
+{
+	for (int i = 0; i < v; i++)
+		for (int j = 0; j < v; j++)
+			if (a[i][j] != 0)
+				for (int k = 0; k < v; k++)
+					if (a[j][k] != 0)
+						a[i][j] = 1;
 }
 
