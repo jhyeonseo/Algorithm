@@ -5,7 +5,15 @@ The copyright belongs to Jang Hyeon-seo, konkuk university.
 Prohibits unauthorized modification or distribution.
 If you have any questions about the code, please email gustj9320@konkuk.ac.kr
 
-Last Revision Date: May 2, 2022
+Last Revision Date: May 5, 2022
+1. Created an Input function for directed graph.
+2. DFS and BFS search functions were upgraded to update parent.
+3. DFS and BFS search functions for directed graphs were added.
+4. Created a warshall function for add an direct edge between reachable nodes.
+5. The print score function was modified to properly detect ROOT.
+Discussion: Can warshall function really consider all reachable nodes?
+
+Revision Date: May 2, 2022
 1. Added the shortest_adjlist function to find the minimum path of the graph expressed as a list.
 2. Added the dijkstra function to find the minimum path of the graph expressed as a matrix.
 3. Renamed node header to queue header.
