@@ -3,7 +3,6 @@
 #include<stdlib.h>
 #include"graph.h"
 
-
 // graph representation and view
 void input_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE *fp)
 {
@@ -787,7 +786,6 @@ void dijkstra(int a[][MAX_NODE], int start, int v)
 {
 	for (int i = 0; i < v; i++)
 		check[i] = 0;
-	init_heap();
 	
 	int* distance = (int*)malloc(sizeof(int) * v);
 	for (int i = 0; i < v; i++)
@@ -850,6 +848,7 @@ void set_topology(network net[], node* a[], int v)
 		net[i].next = a[i];
 		net[i].state = -1;
 	}
+	set_indegree(net, v);
 }
 void set_indegree(network net[], int v)
 {
@@ -873,7 +872,7 @@ void set_indegree(network net[], int v)
 void DFS_topsort(network net[], int start, int v)
 {
 	if (net[start].state)
-		printf("Warning! Indegree of starting node(%c) is %d\n",int_to_name(start),net[start].state);
+		printf("Warning! Indegree of starting node is not zero\n");
 
 	int* temp_state = (int*)malloc(sizeof(int) * v);
 	for (int i = 0; i < v; i++)

@@ -20,9 +20,7 @@ int main()
 	print_adjlist(GL, v);
 
 	set_topology(net, GL, v);
-	set_indegree(net, v);
-	for(int i=0;i<v;i++)
-		DFS_topsort(net, i, v);
+	DFS_topsort(net, 0, v);
 
 	fclose(fp);
 	
