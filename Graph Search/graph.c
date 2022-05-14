@@ -843,25 +843,73 @@ void dijkstra(int a[][MAX_NODE], int start, int v)
 	free(distance);
 }
 // Topological sorting
+void set_topology(network net[], node* a[], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		net[i].next = a[i];
+		net[i].state = -1;
+	}
+}
 void set_indegree(network net[], int v)
 {
-
 	for (int i = 0; i < v; i++)
 	{
 		int count = 0;
-		printf("*%p*\n", net[i]);
-		printf("%d\n", net[i].state);
+		printf("Indegree of %c : ", int_to_name(i));
 		for (int j = 0; j < v; j++)
-			for (node* t = &net[i]; t != NULL; t = t->next)
-			{
-				if (t->vertex == j)
+			for (node* t = net[j].next; t != NULL; t = t->next)
+				if (t->vertex == i)
+				{
 					count++;
-			}
+					printf("%c ", int_to_name(j));
+				}
 		net[i].state = count;
-
-
+		printf("\n",count);
 	}
+
 	
+}
+void DFS_topsort(network net[], int start, int v)
+{
+	if (net[start].state)
+		printf("Warning! Indegree of starting node(%c) is %d\n",int_to_name(start),net[start].state);
+
+	int* temp_state = (int*)malloc(sizeof(int) * v);
+	for (int i = 0; i < v; i++)
+	{
+		parent[i] = -1;
+		temp_state[i] = net[i].state;
+	}
+	top = -1;
+	
+	push(start);
+	int startflag = 1;
+
+	while (top >= 0)
+	{
+		int i = pop();
+		if (startflag)
+		{
+			printf("Start %c", int_to_name(start));
+			startflag = 0;
+		}
+		else
+			printf(" -> %c", int_to_name(i));
+
+		for (node* t = net[i].next; t != NULL; t = t->next)
+		{
+			if (--net[t->vertex].state == 0)
+			{
+				push(t->vertex);
+				parent[t->vertex] = i;
+			}
+		}
+	}
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		net[i].state = temp_state[i];
+
 }
 // Articulation point
 void AP_recur_starter(node* a[], int v)

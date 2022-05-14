@@ -18,11 +18,11 @@ int main()
 	FILE* fp = fopen("graph.txt", "rt");
 	input_directed_adjlist(GL, &v, &e, fp);
 	print_adjlist(GL, v);
-	for (int i = 0; i < v; i++)
-		printf("%p\n", GL[i]);
 
-
-	set_indegree(GL, v);
+	set_topology(net, GL, v);
+	set_indegree(net, v);
+	for(int i=0;i<v;i++)
+		DFS_topsort(net, i, v);
 
 	fclose(fp);
 	

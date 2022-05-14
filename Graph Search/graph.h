@@ -60,7 +60,9 @@ void union_set(int a, int b);
 void shortest_adjlist(node* a[], int start, int v);
 void dijkstra(int a[][MAX_NODE], int start, int v);
 // Topological sorting
+void set_topology(network net[], node* a[], int v);
 void set_indegree(network net[], int v);
+void DFS_topsort(network net[], int start, int v);
 // Spanning tree - articulation point
 int son_of_root;
 int order;
