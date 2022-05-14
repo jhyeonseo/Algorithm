@@ -5,7 +5,15 @@ The copyright belongs to Jang Hyeon-seo, konkuk university.
 Prohibits unauthorized modification or distribution.
 If you have any questions about the code, please email gustj9320@konkuk.ac.kr
 
-Last Revision Date: May 5, 2022
+Last Revision Date: May 14, 2022
+1. Create a function floyd that updates reachability considering weight.
+2. The dijkstra function was modified not to change the contents of the graph.
+3. A structure network was created to store the topology of the graph.
+4. Creates a function set_indegree that updates the preceding conditions in the net structure.
+5. Create a function set_topology that updates the net structure by receiving information from the graph.
+6. Create a function DFS_toport that explores graphs containing prerequisites in a DFS manner.
+
+Revision Date: May 5, 2022
 1. Created an Input function for directed graph.
 2. DFS and BFS search functions were upgraded to update parent.
 3. DFS and BFS search functions for directed graphs were added.
