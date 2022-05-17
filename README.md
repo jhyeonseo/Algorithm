@@ -5,7 +5,13 @@ The copyright belongs to Jang Hyeon-seo, konkuk university.
 Prohibits unauthorized modification or distribution.
 If you have any questions about the code, please email gustj9320@konkuk.ac.kr
 
-Last Revision Date: May 14, 2022
+Last Revision Date: May 17, 2022
+1. A variable to contain outdegree information was added to the network structure.
+2. The set_topology function now updates the outdegrees information as well.
+3. Creates a DFS_revtopsort function that searches the graph in the outdegree direction.
+4. Creates a function strong_recur that detects the part of the graph that creates the cycle.
+
+Revision Date: May 14, 2022
 1. Create a function floyd that updates reachability considering weight.
 2. The dijkstra function was modified not to change the contents of the graph.
 3. A structure network was created to store the topology of the graph.
