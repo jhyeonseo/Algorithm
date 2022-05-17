@@ -19,7 +19,8 @@ typedef struct _edge
 }edge;
 typedef struct _network
 {
-	int state;
+	int indegree;
+	int outdegree;
 	struct _network* next;
 }network;
 int check[MAX_NODE];
@@ -62,12 +63,16 @@ void dijkstra(int a[][MAX_NODE], int start, int v);
 // Topological sorting
 void set_topology(network net[], node* a[], int v);
 void set_indegree(network net[], int v);
+void set_outdegree(network net[], int v);
 void DFS_topsort(network net[], int start, int v);
-// Spanning tree - articulation point
+void DFS_revtopsort(network net[], int start, int v);
+// Articulation point
 int son_of_root;
 int order;
 void AP_recur_starter(node* a[], int v);
-int AP_recur(node* a[], int i);		
+int AP_recur(node* a[], int i);
+int strong_recur_starter(node* a[], int v);
+int strong_recur(node* a[], int i);
 // Reachability
 void floyd(int a[][MAX_NODE], int v);
 void warshall(int a[][MAX_NODE], int v);

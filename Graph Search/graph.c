@@ -846,9 +846,11 @@ void set_topology(network net[], node* a[], int v)
 	for (int i = 0; i < v; i++)
 	{
 		net[i].next = a[i];
-		net[i].state = -1;
+		net[i].indegree = -1;
+		net[i].outdegree = -1;
 	}
 	set_indegree(net, v);
+	set_outdegree(net, v);
 }
 void set_indegree(network net[], int v)
 {
@@ -863,25 +865,41 @@ void set_indegree(network net[], int v)
 					count++;
 					printf("%c ", int_to_name(j));
 				}
-		net[i].state = count;
-		printf("\n",count);
+		net[i].indegree = count;
+		printf("\n");
 	}
 
 	
 }
+void set_outdegree(network net[], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		int count = 0;
+		printf("Outdegree of %c : ", int_to_name(i));
+
+		for (node* t = net[i].next; t != NULL; t = t->next)
+		{
+			count++;
+			printf("%c ", int_to_name(t->vertex));
+		}
+		net[i].outdegree = count;
+		printf("\n");
+	}
+
+}
 void DFS_topsort(network net[], int start, int v)
 {
-	if (net[start].state)
+	if (net[start].indegree)
 		printf("Warning! Indegree of starting node is not zero\n");
 
 	int* temp_state = (int*)malloc(sizeof(int) * v);
 	for (int i = 0; i < v; i++)
 	{
 		parent[i] = -1;
-		temp_state[i] = net[i].state;
+		temp_state[i] = net[i].indegree;
 	}
 	top = -1;
-	
 	push(start);
 	int startflag = 1;
 
@@ -898,7 +916,7 @@ void DFS_topsort(network net[], int start, int v)
 
 		for (node* t = net[i].next; t != NULL; t = t->next)
 		{
-			if (--net[t->vertex].state == 0)
+			if (--net[t->vertex].indegree == 0)
 			{
 				push(t->vertex);
 				parent[t->vertex] = i;
@@ -907,8 +925,51 @@ void DFS_topsort(network net[], int start, int v)
 	}
 	printf("\n");
 	for (int i = 0; i < v; i++)
-		net[i].state = temp_state[i];
+		net[i].indegree = temp_state[i];
 
+	free(temp_state);
+
+}
+void DFS_revtopsort(network net[], int start, int v)
+{
+	if (net[start].outdegree)
+		printf("Warning! Outdegree of starting node is not zero\n");
+
+	int* temp_state = (int*)malloc(sizeof(int) * v);
+	for (int i = 0; i < v; i++)
+	{
+		parent[i] = -1;
+		temp_state[i] = net[i].indegree;
+	}
+	top = -1;
+	push(start);
+	int startflag = 1;
+
+	while (top >= 0)
+	{
+		int i = pop();
+		if (startflag)
+		{
+			printf("Start %c", int_to_name(start));
+			startflag = 0;
+		}
+		else
+			printf(" -> %c", int_to_name(i));
+
+		for(int j=0;j<v;j++)
+			for(node *t=net[j].next;t!=NULL;t=t->next)
+				if (t->vertex == i)
+				{
+					if (--net[j].outdegree == 0)
+						push(j);
+					break;
+				}
+	}
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		net[i].indegree = temp_state[i];
+
+	free(temp_state);
 }
 // Articulation point
 void AP_recur_starter(node* a[], int v)
@@ -969,6 +1030,58 @@ int AP_recur(node* a[], int i)
 
 	return min;
 };
+int strong_recur_starter(node* a[], int v)
+{
+	order = son_of_root = 0;
+	for (int i = 0; i < v; i++) { check[i] = 0; }
+
+	for (int i = 0; i < v; i++)
+	{
+		if (check[i] == 0)
+			strong_recur(a,i);
+	}
+
+
+}
+int strong_recur(node* a[], int i)
+{
+	int min, m;
+	check[i] = min = ++order;
+	push(i);
+
+	for (node* t = a[i]; t != NULL; t = t->next)
+	{
+		if (check[t->vertex] == 0)
+			m = strong_recur(a, t->vertex);
+		else
+			m = check[t->vertex];
+
+		if (m < min)
+			min = m;
+	}
+
+	if (min == check[i])   // articulation point
+	{
+		int k;
+		int flag = 1;
+		while ((k = pop()) != i)
+		{
+			if (flag)
+			{
+				printf("%c <strongly connected!> : ",int_to_name(i));
+				flag = 0;
+			}
+
+			printf("%c ", int_to_name(k));
+			check[k] = INT_MAX;
+		}
+		if (!flag)
+			printf("\n");
+	}
+
+	return min;
+
+}
 // Reachability
 void floyd(int a[][MAX_NODE], int v)
 {
