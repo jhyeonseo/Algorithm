@@ -66,11 +66,13 @@ void set_indegree(network net[], int v);
 void set_outdegree(network net[], int v);
 void DFS_topsort(network net[], int start, int v);
 void DFS_revtopsort(network net[], int start, int v);
+void critical_activity(network net[], int v);
 // Articulation point
 int son_of_root;
 int order;
 void AP_recur_starter(node* a[], int v);
 int AP_recur(node* a[], int i);
+// Strongly connected
 int strong_recur_starter(node* a[], int v);
 int strong_recur(node* a[], int i);
 // Reachability

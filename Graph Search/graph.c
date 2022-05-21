@@ -49,9 +49,9 @@ void input_directed_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE* fp)
 }
 void print_adjmatrix(int a[][MAX_NODE], int v)
 {
-	printf("  ");
+	printf("    ");
 	for (int i = 0; i < v; i++)
-		printf("%c ", int_to_name(i));
+		printf("%c   ", int_to_name(i));
 	printf("\n");
 
 	for (int i = 0; i < v; i++)
@@ -59,7 +59,7 @@ void print_adjmatrix(int a[][MAX_NODE], int v)
 		printf("%c ", int_to_name(i));
 
 		for (int j = 0; j < v; j++)
-			printf("%d ", a[i][j]);
+			printf("%3d ", a[i][j]);
 
 		printf("\n");
 	}
@@ -971,6 +971,105 @@ void DFS_revtopsort(network net[], int start, int v)
 
 	free(temp_state);
 }
+void critical_activity(network net[],int v)
+{
+	int* earliest = (int *)malloc(sizeof(int) * v);      // earliest[x] =  작업 x를 하는데 까지 걸리는 최대 시간
+	int* latest = (int *)malloc(sizeof(int) * v);        // latest[x] = 작업 x에 요구되는 데드라인
+	int* temp_indegree = (int*)malloc(sizeof(int) * v);  
+	int* temp_outdegree = (int*)malloc(sizeof(int) * v); 
+	for (int i = 0; i < v; i++)
+	{
+		temp_indegree[i] = net[i].indegree;
+		temp_outdegree[i] = net[i].outdegree;
+	}
+
+	top = -1;
+	for (int i = 0; i < v; i++)
+	{
+		earliest[i] = 0;
+		if (!net[i].indegree)
+			push(i);           // 선행 작업이 없는 작업 push
+	}
+	
+	while (top >= 0)
+	{
+		int j = pop();
+
+		for (node* t = net[j].next; t != NULL; t = t->next)
+		{
+			if (--net[t->vertex].indegree == 0)
+				push(t->vertex);   // 선행 작업이 끝난 작업 push : A의 후속 작업들의 earliest를 설정해주기 전에 A의 선행 작업들을 모두 고려해 earliest[A]를 설정해야함
+
+			if (earliest[t->vertex] < earliest[j] + t->weight)
+				earliest[t->vertex] = earliest[j] + t->weight;
+		}
+	}
+
+	top = -1;
+	int max = 0;
+	for (int i = 0; i < v; i++)
+		if (max < earliest[i] && net[i].outdegree == 0)
+			max = earliest[i];
+	for (int i = 0; i < v; i++)
+	{
+		latest[i] = max;  // 작업들의 데드라인을 최종 작업을 하는데 까지 걸리는 최대 시간으로 초기화
+		if (!net[i].outdegree)
+			push(i);      // 후속 작업이 없는 작업 push
+	}
+
+	while (top >= 0)
+	{
+		int j = pop();
+
+		for(int i=0;i<v;i++)
+			for (node* t = net[i].next; t != NULL; t = t->next)
+			{
+				if (t->vertex == j)
+				{
+					if (--net[i].outdegree == 0)
+						push(i);  // 후속 작업이 끝난 작업 push : A의 선행 작업들의 latest를 설정해주기 전에 A의 후속 작업들을 모두 고려해 latest[A]를 설정해야함
+
+					if (latest[i] > latest[j] - t->weight)
+						latest[i] = latest[j] - t->weight;
+					
+					break;
+				}
+
+			}
+	}
+
+	printf("\n<Earliest>\n");
+	for (int i = 0; i < v; i++)
+		printf("  %c", int_to_name(i));
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		printf("%3d", earliest[i]);
+
+	printf("\n<Latest>\n");
+	for (int i = 0; i < v; i++)
+		printf("  %c", int_to_name(i));
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		printf("%3d", latest[i]);
+
+	printf("\n<Critical Activitiy>\n  ");    // 연결시 가장 긴 path가 된다
+	for (int i = 0; i < v; i++)
+		if (earliest[i] == latest[i])
+			printf("%c:%d ", int_to_name(i),latest[i]);
+
+	printf("\n");
+
+	for (int i = 0; i < v; i++)
+	{
+		net[i].indegree = temp_indegree[i];
+		net[i].outdegree = temp_outdegree[i];
+	}
+
+	free(earliest);
+	free(latest);
+	free(temp_indegree);
+	free(temp_outdegree);
+}
 // Articulation point
 void AP_recur_starter(node* a[], int v)
 {
@@ -1030,6 +1129,7 @@ int AP_recur(node* a[], int i)
 
 	return min;
 };
+// Strongly connected
 int strong_recur_starter(node* a[], int v)
 {
 	order = son_of_root = 0;
