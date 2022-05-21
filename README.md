@@ -5,7 +5,12 @@ The copyright belongs to Jang Hyeon-seo, konkuk university.
 Prohibits unauthorized modification or distribution.
 If you have any questions about the code, please email gustj9320@konkuk.ac.kr
 
-Last Revision Date: May 17, 2022
+
+Last Revision Date: May 21, 2022
+1. The print_adjmatrix function was changed in a way suitable for outputting a three-digit weight.
+2. Create a function critical_activity that takes network as input and finds the maximum time and deadline for the task and then finds the critical task.
+
+Revision Date: May 17, 2022
 1. A variable to contain outdegree information was added to the network structure.
 2. The set_topology function now updates the outdegrees information as well.
 3. Creates a DFS_revtopsort function that searches the graph in the outdegree direction.
