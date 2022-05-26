@@ -49,7 +49,9 @@ void DFS_adjlist(node* a[], int v);
 void DFS_directed_adjlist(node* a[], int v);
 // BFS search
 void BFS_adjmatrix(int a[][MAX_NODE], int v);
+void BFS_directed_adjmatrix(int a[][MAX_NODE], int v);
 void BFS_adjlist(node* a[], int v);
+void BFS_directed_adjlist(node* a[], int v);
 void count_matrix_components(int a[][MAX_NODE], int v);
 void count_list_components(node* a[], int v);
 // PFS search
@@ -60,13 +62,6 @@ void union_set(int a, int b);
 // Shortest path
 void shortest_adjlist(node* a[], int start, int v);
 void dijkstra(int a[][MAX_NODE], int start, int v);
-// Topological sorting
-void set_topology(network net[], node* a[], int v);
-void set_indegree(network net[], int v);
-void set_outdegree(network net[], int v);
-void DFS_topsort(network net[], int start, int v);
-void DFS_revtopsort(network net[], int start, int v);
-void critical_activity(network net[], int v);
 // Articulation point
 int son_of_root;
 int order;
@@ -78,3 +73,17 @@ int strong_recur(node* a[], int i);
 // Reachability
 void floyd(int a[][MAX_NODE], int v);
 void warshall(int a[][MAX_NODE], int v);
+/////////////////*** Graph with hirechacy ***/////////////////
+// Topology setting
+void set_topology(network net[], node* a[], int v);
+void set_indegree(network net[], int v);
+void set_outdegree(network net[], int v);
+// Topology searching with prerequisites
+void DFS_topsort(network net[], int start, int v);
+void DFS_revtopsort(network net[], int start, int v);
+// Topology searching with time
+void critical_activity(network net[], int v);
+// Topology searching with start and end
+int BFS_adjmatrix_path(int a[][MAX_NODE], int* path, int v, int start, int end);
+// Maximum flow
+void Maximum_flow(int Capacity[][MAX_NODE], int Flow[][MAX_NODE], int v, int SOURCE, int SINK);

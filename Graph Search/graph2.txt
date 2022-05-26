@@ -1,0 +1,11 @@
+6 10
+AB 10
+BA 4
+AC 12
+CB 9
+DC 7
+DF 4
+CF 20
+EA 16
+EB 13
+BD 14

@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include"graph.h"
 
-// graph representation and view
+// graph making & print
 void input_adjmatrix(int a[][MAX_NODE], int* v, int* e, FILE *fp)
 {
 	fscanf(fp, "%d %d", v, e);
@@ -840,236 +840,6 @@ void dijkstra(int a[][MAX_NODE], int start, int v)
 
 	free(distance);
 }
-// Topological sorting
-void set_topology(network net[], node* a[], int v)
-{
-	for (int i = 0; i < v; i++)
-	{
-		net[i].next = a[i];
-		net[i].indegree = -1;
-		net[i].outdegree = -1;
-	}
-	set_indegree(net, v);
-	set_outdegree(net, v);
-}
-void set_indegree(network net[], int v)
-{
-	for (int i = 0; i < v; i++)
-	{
-		int count = 0;
-		printf("Indegree of %c : ", int_to_name(i));
-		for (int j = 0; j < v; j++)
-			for (node* t = net[j].next; t != NULL; t = t->next)
-				if (t->vertex == i)
-				{
-					count++;
-					printf("%c ", int_to_name(j));
-				}
-		net[i].indegree = count;
-		printf("\n");
-	}
-
-	
-}
-void set_outdegree(network net[], int v)
-{
-	for (int i = 0; i < v; i++)
-	{
-		int count = 0;
-		printf("Outdegree of %c : ", int_to_name(i));
-
-		for (node* t = net[i].next; t != NULL; t = t->next)
-		{
-			count++;
-			printf("%c ", int_to_name(t->vertex));
-		}
-		net[i].outdegree = count;
-		printf("\n");
-	}
-
-}
-void DFS_topsort(network net[], int start, int v)
-{
-	if (net[start].indegree)
-		printf("Warning! Indegree of starting node is not zero\n");
-
-	int* temp_state = (int*)malloc(sizeof(int) * v);
-	for (int i = 0; i < v; i++)
-	{
-		parent[i] = -1;
-		temp_state[i] = net[i].indegree;
-	}
-	top = -1;
-	push(start);
-	int startflag = 1;
-
-	while (top >= 0)
-	{
-		int i = pop();
-		if (startflag)
-		{
-			printf("Start %c", int_to_name(start));
-			startflag = 0;
-		}
-		else
-			printf(" -> %c", int_to_name(i));
-
-		for (node* t = net[i].next; t != NULL; t = t->next)
-		{
-			if (--net[t->vertex].indegree == 0)
-			{
-				push(t->vertex);
-				parent[t->vertex] = i;
-			}
-		}
-	}
-	printf("\n");
-	for (int i = 0; i < v; i++)
-		net[i].indegree = temp_state[i];
-
-	free(temp_state);
-
-}
-void DFS_revtopsort(network net[], int start, int v)
-{
-	if (net[start].outdegree)
-		printf("Warning! Outdegree of starting node is not zero\n");
-
-	int* temp_state = (int*)malloc(sizeof(int) * v);
-	for (int i = 0; i < v; i++)
-	{
-		parent[i] = -1;
-		temp_state[i] = net[i].indegree;
-	}
-	top = -1;
-	push(start);
-	int startflag = 1;
-
-	while (top >= 0)
-	{
-		int i = pop();
-		if (startflag)
-		{
-			printf("Start %c", int_to_name(start));
-			startflag = 0;
-		}
-		else
-			printf(" -> %c", int_to_name(i));
-
-		for(int j=0;j<v;j++)
-			for(node *t=net[j].next;t!=NULL;t=t->next)
-				if (t->vertex == i)
-				{
-					if (--net[j].outdegree == 0)
-						push(j);
-					break;
-				}
-	}
-	printf("\n");
-	for (int i = 0; i < v; i++)
-		net[i].indegree = temp_state[i];
-
-	free(temp_state);
-}
-void critical_activity(network net[],int v)
-{
-	int* earliest = (int *)malloc(sizeof(int) * v);      // earliest[x] =  작업 x를 하는데 까지 걸리는 최대 시간
-	int* latest = (int *)malloc(sizeof(int) * v);        // latest[x] = 작업 x에 요구되는 데드라인
-	int* temp_indegree = (int*)malloc(sizeof(int) * v);  
-	int* temp_outdegree = (int*)malloc(sizeof(int) * v); 
-	for (int i = 0; i < v; i++)
-	{
-		temp_indegree[i] = net[i].indegree;
-		temp_outdegree[i] = net[i].outdegree;
-	}
-
-	top = -1;
-	for (int i = 0; i < v; i++)
-	{
-		earliest[i] = 0;
-		if (!net[i].indegree)
-			push(i);           // 선행 작업이 없는 작업 push
-	}
-	
-	while (top >= 0)
-	{
-		int j = pop();
-
-		for (node* t = net[j].next; t != NULL; t = t->next)
-		{
-			if (--net[t->vertex].indegree == 0)
-				push(t->vertex);   // 선행 작업이 끝난 작업 push : A의 후속 작업들의 earliest를 설정해주기 전에 A의 선행 작업들을 모두 고려해 earliest[A]를 설정해야함
-
-			if (earliest[t->vertex] < earliest[j] + t->weight)
-				earliest[t->vertex] = earliest[j] + t->weight;
-		}
-	}
-
-	top = -1;
-	int max = 0;
-	for (int i = 0; i < v; i++)
-		if (max < earliest[i] && net[i].outdegree == 0)
-			max = earliest[i];
-	for (int i = 0; i < v; i++)
-	{
-		latest[i] = max;  // 작업들의 데드라인을 최종 작업을 하는데 까지 걸리는 최대 시간으로 초기화
-		if (!net[i].outdegree)
-			push(i);      // 후속 작업이 없는 작업 push
-	}
-
-	while (top >= 0)
-	{
-		int j = pop();
-
-		for(int i=0;i<v;i++)
-			for (node* t = net[i].next; t != NULL; t = t->next)
-			{
-				if (t->vertex == j)
-				{
-					if (--net[i].outdegree == 0)
-						push(i);  // 후속 작업이 끝난 작업 push : A의 선행 작업들의 latest를 설정해주기 전에 A의 후속 작업들을 모두 고려해 latest[A]를 설정해야함
-
-					if (latest[i] > latest[j] - t->weight)
-						latest[i] = latest[j] - t->weight;
-					
-					break;
-				}
-
-			}
-	}
-
-	printf("\n<Earliest>\n");
-	for (int i = 0; i < v; i++)
-		printf("  %c", int_to_name(i));
-	printf("\n");
-	for (int i = 0; i < v; i++)
-		printf("%3d", earliest[i]);
-
-	printf("\n<Latest>\n");
-	for (int i = 0; i < v; i++)
-		printf("  %c", int_to_name(i));
-	printf("\n");
-	for (int i = 0; i < v; i++)
-		printf("%3d", latest[i]);
-
-	printf("\n<Critical Activitiy>\n  ");    // 연결시 가장 긴 path가 된다
-	for (int i = 0; i < v; i++)
-		if (earliest[i] == latest[i])
-			printf("%c:%d ", int_to_name(i),latest[i]);
-
-	printf("\n");
-
-	for (int i = 0; i < v; i++)
-	{
-		net[i].indegree = temp_indegree[i];
-		net[i].outdegree = temp_outdegree[i];
-	}
-
-	free(earliest);
-	free(latest);
-	free(temp_indegree);
-	free(temp_outdegree);
-}
 // Articulation point
 void AP_recur_starter(node* a[], int v)
 {
@@ -1208,4 +978,303 @@ void warshall(int a[][MAX_NODE], int v)
 					if (a[j][k] != 0)
 						a[i][j] = 1;
 }
+/////////////////*** Graph with hirechacy ***/////////////////
+// Topology setting
+void set_topology(network net[], node* a[], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		net[i].next = a[i];
+		net[i].indegree = -1;
+		net[i].outdegree = -1;
+	}
+	set_indegree(net, v);
+	set_outdegree(net, v);
+}
+void set_indegree(network net[], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		int count = 0;
+		printf("Indegree of %c : ", int_to_name(i));
+		for (int j = 0; j < v; j++)
+			for (node* t = net[j].next; t != NULL; t = t->next)
+				if (t->vertex == i)
+				{
+					count++;
+					printf("%c ", int_to_name(j));
+				}
+		net[i].indegree = count;
+		printf("\n");
+	}
 
+
+}
+void set_outdegree(network net[], int v)
+{
+	for (int i = 0; i < v; i++)
+	{
+		int count = 0;
+		printf("Outdegree of %c : ", int_to_name(i));
+
+		for (node* t = net[i].next; t != NULL; t = t->next)
+		{
+			count++;
+			printf("%c ", int_to_name(t->vertex));
+		}
+		net[i].outdegree = count;
+		printf("\n");
+	}
+
+}
+// Topology searching with prerequisites
+void DFS_topsort(network net[], int start, int v)
+{
+	if (net[start].indegree)
+		printf("Warning! Indegree of starting node is not zero\n");
+
+	int* temp_state = (int*)malloc(sizeof(int) * v);
+	for (int i = 0; i < v; i++)
+	{
+		parent[i] = -1;
+		temp_state[i] = net[i].indegree;
+	}
+	top = -1;
+	push(start);
+	int startflag = 1;
+
+	while (top >= 0)
+	{
+		int i = pop();
+		if (startflag)
+		{
+			printf("Start %c", int_to_name(start));
+			startflag = 0;
+		}
+		else
+			printf(" -> %c", int_to_name(i));
+
+		for (node* t = net[i].next; t != NULL; t = t->next)
+		{
+			if (--net[t->vertex].indegree == 0)
+			{
+				push(t->vertex);
+				parent[t->vertex] = i;
+			}
+		}
+	}
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		net[i].indegree = temp_state[i];
+
+	free(temp_state);
+
+}
+void DFS_revtopsort(network net[], int start, int v)
+{
+	if (net[start].outdegree)
+		printf("Warning! Outdegree of starting node is not zero\n");
+
+	int* temp_state = (int*)malloc(sizeof(int) * v);
+	for (int i = 0; i < v; i++)
+	{
+		parent[i] = -1;
+		temp_state[i] = net[i].indegree;
+	}
+	top = -1;
+	push(start);
+	int startflag = 1;
+
+	while (top >= 0)
+	{
+		int i = pop();
+		if (startflag)
+		{
+			printf("Start %c", int_to_name(start));
+			startflag = 0;
+		}
+		else
+			printf(" -> %c", int_to_name(i));
+
+		for (int j = 0; j < v; j++)
+			for (node* t = net[j].next; t != NULL; t = t->next)
+				if (t->vertex == i)
+				{
+					if (--net[j].outdegree == 0)
+						push(j);
+					break;
+				}
+	}
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		net[i].indegree = temp_state[i];
+
+	free(temp_state);
+}
+// Topology searching with time
+void critical_activity(network net[], int v)
+{
+	int* earliest = (int*)malloc(sizeof(int) * v);      // earliest[x] =  작업 x를 하는데 까지 걸리는 최대 시간
+	int* latest = (int*)malloc(sizeof(int) * v);        // latest[x] = 작업 x에 요구되는 데드라인
+	int* temp_indegree = (int*)malloc(sizeof(int) * v);
+	int* temp_outdegree = (int*)malloc(sizeof(int) * v);
+	for (int i = 0; i < v; i++)
+	{
+		temp_indegree[i] = net[i].indegree;
+		temp_outdegree[i] = net[i].outdegree;
+	}
+
+	top = -1;
+	for (int i = 0; i < v; i++)
+	{
+		earliest[i] = 0;
+		if (!net[i].indegree)
+			push(i);           // 선행 작업이 없는 작업 push
+	}
+
+	while (top >= 0)
+	{
+		int j = pop();
+
+		for (node* t = net[j].next; t != NULL; t = t->next)
+		{
+			if (--net[t->vertex].indegree == 0)
+				push(t->vertex);   // 선행 작업이 끝난 작업 push : A의 후속 작업들의 earliest를 설정해주기 전에 A의 선행 작업들을 모두 고려해 earliest[A]를 설정해야함
+
+			if (earliest[t->vertex] < earliest[j] + t->weight)
+				earliest[t->vertex] = earliest[j] + t->weight;
+		}
+	}
+
+	top = -1;
+	int max = 0;
+	for (int i = 0; i < v; i++)
+		if (max < earliest[i] && net[i].outdegree == 0)
+			max = earliest[i];
+	for (int i = 0; i < v; i++)
+	{
+		latest[i] = max;  // 작업들의 데드라인을 최종 작업을 하는데 까지 걸리는 최대 시간으로 초기화
+		if (!net[i].outdegree)
+			push(i);      // 후속 작업이 없는 작업 push
+	}
+
+	while (top >= 0)
+	{
+		int j = pop();
+
+		for (int i = 0; i < v; i++)
+			for (node* t = net[i].next; t != NULL; t = t->next)
+			{
+				if (t->vertex == j)
+				{
+					if (--net[i].outdegree == 0)
+						push(i);  // 후속 작업이 끝난 작업 push : A의 선행 작업들의 latest를 설정해주기 전에 A의 후속 작업들을 모두 고려해 latest[A]를 설정해야함
+
+					if (latest[i] > latest[j] - t->weight)
+						latest[i] = latest[j] - t->weight;
+
+					break;
+				}
+
+			}
+	}
+
+	printf("\n<Earliest>\n");
+	for (int i = 0; i < v; i++)
+		printf("  %c", int_to_name(i));
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		printf("%3d", earliest[i]);
+
+	printf("\n<Latest>\n");
+	for (int i = 0; i < v; i++)
+		printf("  %c", int_to_name(i));
+	printf("\n");
+	for (int i = 0; i < v; i++)
+		printf("%3d", latest[i]);
+
+	printf("\n<Critical Activitiy>\n  ");    // 연결시 가장 긴 path가 된다
+	for (int i = 0; i < v; i++)
+		if (earliest[i] == latest[i])
+			printf("%c:%d ", int_to_name(i), latest[i]);
+
+	printf("\n");
+
+	for (int i = 0; i < v; i++)
+	{
+		net[i].indegree = temp_indegree[i];
+		net[i].outdegree = temp_outdegree[i];
+	}
+
+	free(earliest);
+	free(latest);
+	free(temp_indegree);
+	free(temp_outdegree);
+}
+// Topology searching with start and end
+int BFS_adjmatrix_path(int a[][MAX_NODE], int* path, int v, int start, int end)
+{
+	for (int i = 0; i < v; i++)
+		check[i] = parent[i] = -1;
+
+	init_queue();
+	put(start);
+	check[start] = 1;
+	while (!queue_empty())
+	{
+		int j = get();
+		if (j == end)
+			break;
+
+		for (int i = 0; i < v; i++)
+			if (a[j][i] != 0 && check[i] != 1)
+			{
+				put(i);
+				parent[i] = j;
+				check[i] = 1;
+			}
+	}
+
+	int count = 0; // end까지 도착하는데 거치는 vertex의 수
+	for (int i = parent[end]; i != -1; i = parent[i])
+		count++;
+
+	int k = end;
+	for (int i = 1; i <= count; i++, k = parent[k])
+		path[count - i] = parent[k];
+	path[count] = end;
+	path[count + 1] = -1;
+
+	return count;
+}
+// Maximum flow
+void Maximum_flow(int Capacity[][MAX_NODE], int Flow[][MAX_NODE], int v, int SOURCE, int SINK)
+{
+	for (int i = 0; i < v; i++)
+		for (int j = 0; j < v; j++)
+			Flow[i][j] = Capacity[i][j];
+
+	int* path = (int*)malloc(sizeof(int) * v);
+	while (BFS_adjmatrix_path(Flow, path, v, SOURCE, SINK))
+	{
+		int min = INT_MAX;
+
+		for (int i = 1; path[i] != -1; i++)
+			if (min > Flow[path[i - 1]][path[i]])
+				min = Flow[path[i - 1]][path[i]];   // Augmenting path에서 흐를 수 있는 최댓값
+
+
+		for (int i = 1; path[i] != -1; i++)
+		{
+			Flow[path[i - 1]][path[i]] -= min;
+			Flow[path[i]][path[i - 1]] += min;
+		}
+
+	}
+	for (int i = 0; i < v; i++)
+		for (int j = 0; j < v; j++)
+			Flow[i][j] = Capacity[i][j] - Flow[i][j];  // Residual 값을 Flow 값으로 변경
+
+	free(path);
+	return;
+}

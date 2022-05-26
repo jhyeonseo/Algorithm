@@ -1,25 +1,22 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
-#include "stack.h"
-#include "queue.h"
-#include"heap.h"
-#include"graph.h"
+#include "graph.h"
 
 
 
 int main()
 {
-	network net[MAX_NODE];
-	node* GL[MAX_NODE];
+	int Flow[MAX_NODE][MAX_NODE];
+	int Capacity[MAX_NODE][MAX_NODE];
 	int v, e;
 
-	FILE* fp = fopen("graph.txt", "rt");
-	input_directed_adjlist(GL, &v, &e, fp);
-	print_adjlist(GL, v);
+	FILE* fp = fopen("graph2.txt", "rt");
+	input_directed_adjmatrix(Capacity, &v, &e, fp);
+	print_adjmatrix(Capacity, v);
+	Maximum_flow(Capacity,Flow, v, 4, 5);
+	print_adjmatrix(Flow, v);
 
-	set_topology(net, GL, v);
-	critical_activity(net, v);
 	fclose(fp);
 	
 	return 0;
