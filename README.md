@@ -5,8 +5,11 @@ The copyright belongs to Jang Hyeon-seo, konkuk university.
 Prohibits unauthorized modification or distribution.
 If you have any questions about the code, please email gustj9320@konkuk.ac.kr
 
+Last Revision Date: May 26, 2022
+1. Creates a function BFS_adjmatrix_path that uses BFS method to create a path from the beginning to the end of a graph.
+2. Creates a function Maximum_flow that takes capacity as input and finds the maximum value that can flow to the Sink.
 
-Last Revision Date: May 21, 2022
+Revision Date: May 21, 2022
 1. The print_adjmatrix function was changed in a way suitable for outputting a three-digit weight.
 2. Create a function critical_activity that takes network as input and finds the maximum time and deadline for the task and then finds the critical task.
 
