@@ -1,0 +1,9 @@
+8 10
+AB 1 AC 1
+CD 1
+DE 1
+EB 1 EF 1
+BG 1
+GH 1
+HE 1
+FC 1

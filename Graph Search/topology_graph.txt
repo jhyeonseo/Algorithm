@@ -1,0 +1,10 @@
+12 14
+AB 1
+BC 1
+CD 1 CE 1 CF 1 CG 1
+EK 1
+FH 1 FI 1 FJ 1
+HK 1
+IK 1
+JK 1
+KL 1

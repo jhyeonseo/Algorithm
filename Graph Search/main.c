@@ -4,18 +4,18 @@
 #include "graph.h"
 
 
-
+int GM[MAX_NODE][MAX_NODE];
+node* GL[MAX_NODE];
 int main()
 {
-	int Flow[MAX_NODE][MAX_NODE];
-	int Capacity[MAX_NODE][MAX_NODE];
 	int v, e;
 
-	FILE* fp = fopen("graph2.txt", "rt");
-	input_directed_adjmatrix(Capacity, &v, &e, fp);
-	print_adjmatrix(Capacity, v);
-	Maximum_flow(Capacity,Flow, v, 4, 5);
-	print_adjmatrix(Flow, v);
+	FILE* fp = fopen("strongly_connected_test2.txt", "rt");
+	input_directed_adjlist(GL, &v, &e, fp);
+	print_adjlist(GL, v);
+
+	//strong_recur_starter(GL, v);
+	AP_recur_starter(GL, v);
 
 	fclose(fp);
 	

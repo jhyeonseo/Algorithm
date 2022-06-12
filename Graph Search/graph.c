@@ -957,26 +957,29 @@ void floyd(int a[][MAX_NODE], int v)
 {
 	for (int i = 0; i < v; i++)
 		for (int j = 0; j < v; j++)
-			if (a[i][j] != 0)
+			if ((i != j) && a[i][j] == 0)
+				a[i][j] = 10000;
+
+
+	for (int j = 0; j < v; j++)
+		for (int i = 0; i < v; i++)
 				for (int k = 0; k < v; k++)
-				{
-					if (a[j][k] != 0)
-					{
-						if (a[i][k] == 0)
-							a[i][k] = a[i][j] + a[j][k];
-						else if (a[i][k] > a[i][j] + a[j][k])
-							a[i][k] = a[i][j] + a[j][k];
-					}
-				}
+					if (a[i][k] > a[i][j] + a[j][k])
+						a[i][k] = a[i][j] + a[j][k];
+
+	for (int i = 0; i < v; i++)
+		for (int j = 0; j < v; j++)
+			if ((i == j) || a[i][j] == 10000)
+				a[i][j] = -1;
 }
 void warshall(int a[][MAX_NODE], int v)
 {
-	for (int i = 0; i < v; i++)
-		for (int j = 0; j < v; j++)
-			if (a[i][j] != 0)
+	for (int j = 0; j < v; j++)
+		for (int i = 0; i < v; i++)
+			if (a[i][j])
 				for (int k = 0; k < v; k++)
-					if (a[j][k] != 0)
-						a[i][j] = 1;
+					if (a[j][k])
+						a[i][k] = 1;
 }
 /////////////////*** Graph with hirechacy ***/////////////////
 // Topology setting
@@ -1129,7 +1132,7 @@ void critical_activity(network net[], int v)
 	{
 		earliest[i] = 0;
 		if (!net[i].indegree)
-			push(i);           // 선행 작업이 없는 작업 push
+			push(i);           // 선행 작업이 없는 작업들 push
 	}
 
 	while (top >= 0)
