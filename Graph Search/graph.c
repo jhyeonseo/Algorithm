@@ -797,7 +797,6 @@ void dijkstra(int a[][MAX_NODE], int start, int v)
 	int x = start;
 	check[x] = 1;
 	parent[x] = -1;
-	//printf("<Root %c>\n", int_to_name(x));
 	while (1)
 	{
 		int d = INT_MAX;
@@ -813,7 +812,6 @@ void dijkstra(int a[][MAX_NODE], int start, int v)
 			break;
 
 		check[x] = 1;                                        
-		//printf("visit %c(%d)\n", int_to_name(x), distance[x]);
 
 		for(int i=0;i<v;i++)
 			if (a[x][i] != 0 && check[i] == 0)
@@ -1238,7 +1236,7 @@ int BFS_adjmatrix_path(int a[][MAX_NODE], int* path, int v, int start, int end)
 			}
 	}
 
-	int count = 0; // end까지 도착하는데 거치는 vertex의 수
+	int count = 0; // start에서 출발하여 end의 바로 전까지 도착하는데 거치는 vertex의 수
 	for (int i = parent[end]; i != -1; i = parent[i])
 		count++;
 
@@ -1255,7 +1253,7 @@ void Maximum_flow(int Capacity[][MAX_NODE], int Flow[][MAX_NODE], int v, int SOU
 {
 	for (int i = 0; i < v; i++)
 		for (int j = 0; j < v; j++)
-			Flow[i][j] = Capacity[i][j];
+			Flow[i][j] = Capacity[i][j];     // Flow 값을 저장할 배열을 Reisudal 값으로 초기화
 
 	int* path = (int*)malloc(sizeof(int) * v);
 	while (BFS_adjmatrix_path(Flow, path, v, SOURCE, SINK))
