@@ -7,15 +7,17 @@
 int GM[MAX_NODE][MAX_NODE];
 int FLOW[MAX_NODE][MAX_NODE];
 node* GL[MAX_NODE];
+network NET[MAX_NODE];
 int main()
 {
 	int v, e;
 
-	FILE* fp = fopen("capacity.txt", "rt");
-	input_directed_adjmatrix(GM, &v, &e, fp);
-	print_adjmatrix(GM, v);
-	Maximum_flow(GM, FLOW, v, name_to_int('E'), name_to_int('F'));
-	print_adjmatrix(FLOW, v);
+	FILE* fp = fopen("aoe_grpah.txt", "rt");
+	input_directed_adjlist(GL, &v, &e, fp);
+	print_adjlist(GL, v);
+
+	set_topology(NET, GL, v);
+	critical_activity(NET, v);
 
 	fclose(fp);
 	

@@ -1154,7 +1154,7 @@ void critical_activity(network net[], int v)
 			max = earliest[i];
 	for (int i = 0; i < v; i++)
 	{
-		latest[i] = max;  // 작업들의 데드라인을 최종 작업을 하는데 까지 걸리는 최대 시간으로 초기화
+		latest[i] = max;  // 작업들의 데드라인을 최종 작업을 하는데까지 걸리는 최대 시간으로 초기화
 		if (!net[i].outdegree)
 			push(i);      // 후속 작업이 없는 작업 push
 	}
@@ -1176,7 +1176,6 @@ void critical_activity(network net[], int v)
 
 					break;
 				}
-
 			}
 	}
 
@@ -1194,10 +1193,11 @@ void critical_activity(network net[], int v)
 	for (int i = 0; i < v; i++)
 		printf("%3d", latest[i]);
 
-	printf("\n<Critical Activitiy>\n  ");    // 연결시 가장 긴 path가 된다
+	printf("\n<Critical Activitiy>\n");    // 연결시 가장 긴 path가 된다
 	for (int i = 0; i < v; i++)
-		if (earliest[i] == latest[i])
-			printf("%c:%d ", int_to_name(i), latest[i]);
+		for (node* t = net[i].next; t != NULL; t = t->next)
+			if (earliest[i] == latest[t->vertex] - (t->weight))
+				printf("<%c -> %c>\n", int_to_name(i), int_to_name(t->vertex));
 
 	printf("\n");
 
