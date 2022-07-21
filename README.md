@@ -6,7 +6,7 @@ Prohibits unauthorized modification or distribution.
 If you have any questions about the code, please email gustj9320@konkuk.ac.kr
 
 Last Revision Date: July 21, 2022
-1.The error of the critical activity function was corrected
+1. The error of the critical activity function was corrected 
 
 Revision Date: May 26, 2022
 1. Creates a function BFS_adjmatrix_path that uses BFS method to create a path from the beginning to the end of a graph.
