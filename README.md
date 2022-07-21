@@ -5,7 +5,10 @@ The copyright belongs to Jang Hyeon-seo, konkuk university.
 Prohibits unauthorized modification or distribution.
 If you have any questions about the code, please email gustj9320@konkuk.ac.kr
 
-Last Revision Date: May 26, 2022
+Last Revision Date: July 21, 2022
+1.The error of the critical activity function was corrected
+
+Revision Date: May 26, 2022
 1. Creates a function BFS_adjmatrix_path that uses BFS method to create a path from the beginning to the end of a graph.
 2. Creates a function Maximum_flow that takes capacity as input and finds the maximum value that can flow to the Sink.
 
