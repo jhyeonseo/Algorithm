@@ -1,10 +1,6 @@
 Code for advanced algorithm lecture
 Prof. Wonjun Kim
 
-The copyright belongs to Jang Hyeon-seo, konkuk university.
-Prohibits unauthorized modification or distribution.
-If you have any questions about the code, please email gustj9320@konkuk.ac.kr
-
 Last Revision Date: July 21, 2022
 1. The error of the critical activity function was corrected 
 
